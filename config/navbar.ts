@@ -13,7 +13,7 @@ export type Houses = typeof houses
 export const houses = ["HDB", "Condo", "Landed", "Studio", "Dormitory"]
 
 export const navbarConfig = {
-  name: "quarto.sg",
+  name: "quarto",
   description:
     "We help you find listings for your next room rental in Singapore.",
   rooms: rooms,
