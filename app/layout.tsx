@@ -4,6 +4,7 @@ import { Metadata } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/Toaster"
 import Navbar from "@/components/navbar/Navbar"
 import Searchbar from "@/components/searchbar/Searchbar"
 import { SiteHeader } from "@/components/site-header"
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <Searchbar />
                 <div className="flex-1">{children}</div>
               </div>
+              <Toaster />
               <TailwindIndicator />
             </ThemeProvider>
           </AuthContext>

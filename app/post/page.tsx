@@ -8,7 +8,7 @@ type Props = {}
 
 const PostPage = (props: Props) => {
   return (
-    <div className="hidden container space-y-6 pt-6 pb-16 md:block">
+    <div className="container space-y-6 pt-6 pb-16 md:block">
       <div className="space-y-0.5">
         <h2 className="text-2xl font-bold tracking-tight">List a room</h2>
         <p className="text-muted-foreground">
@@ -16,8 +16,8 @@ const PostPage = (props: Props) => {
         </p>
       </div>
 
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2">
-        <ImageUpload />
+      <div className="w-full grid max-w-lg mx-auto">
+        {/* <ImageUpload /> */}
         <ListingForm />
       </div>
     </div>

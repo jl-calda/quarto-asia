@@ -12,6 +12,8 @@ import qs from "query-string"
 
 import { Houses, Rooms } from "@/config/navbar"
 
+import { Button } from "../ui/button"
+
 interface ItemProps {
   item: string
   isActive: boolean
@@ -56,9 +58,14 @@ const Item: React.FC<ItemProps> = ({ item, isActive, type }) => {
     router.push(url)
   }, [router, params, item, type])
   return (
-    <li className="cursor-pointer px-2" onClick={handleClick}>
-      {item}
-    </li>
+    <Button
+      variant="ghost"
+      className="p-0 m-0 h-auto font-light text-sm hover:font-normal py-1 px-2"
+    >
+      <li className="cursor-pointer px-2" onClick={handleClick}>
+        {item}
+      </li>
+    </Button>
   )
 }
 interface CategoriesProps {
@@ -74,8 +81,8 @@ const Categories: React.FC<CategoriesProps> = ({ houses, rooms }) => {
   const pathName = usePathname()
 
   return (
-    <div className="hidden flex-col space-y-2 lg:flex">
-      <ul className="list-none flex flex-row flex-wrap space-x-4 text-sm">
+    <div className="hidden flex-col lg:flex">
+      <ul className="list-none flex flex-row flex-wrap text-sm space-x-2">
         {houses.map((house) => (
           <Item
             type="house"
@@ -86,7 +93,7 @@ const Categories: React.FC<CategoriesProps> = ({ houses, rooms }) => {
         ))}
       </ul>
       {/* <div className="border-b w-full" /> */}
-      <ul className="list-none flex flex-row flex-wrap space-x-4 text-sm">
+      <ul className="list-none flex flex-row flex-wrap text-sm space-x-2">
         {rooms.map((room) => (
           <Item
             type="room"

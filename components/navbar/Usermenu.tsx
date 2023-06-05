@@ -1,7 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { MenubarMenu } from "@radix-ui/react-menubar"
+import { useCallback, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import clsx from "clsx"
 import { signOut, useSession } from "next-auth/react"
 
@@ -17,30 +17,33 @@ import {
 
 import { Icons } from "../Icons"
 import { Button } from "../ui/button"
-import { Card } from "../ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog"
-import { Menubar, MenubarItem } from "../ui/menubar"
+import { Dialog, DialogTrigger } from "../ui/dialog"
+import { ToastAction } from "../ui/toast"
+import { useToast } from "../ui/use-toast"
 import LoginDialog from "./dialogs/LoginContent"
 import RegisterDialog from "./dialogs/RegisterContent"
 
-type Props = {}
-
-const Usermenu = (props: Props) => {
+const Usermenu = () => {
+  const { toast } = useToast()
+  const router = useRouter()
   const session = useSession()
-  console.log(session)
   const [active, setActive] = useState("")
 
+  const handlePost = () => {
+    if (session.status === "authenticated") {
+      return router.push("/post")
+    } else {
+      toast({
+        variant: "default",
+        title: "Unauthorized",
+        description: "Please login or register to post",
+      })
+    }
+  }
+
   return (
-    <>
-      <Dialog>
+    <Dialog>
+      <div className="flex flex-row item gap-x-2">
         {session.status === "authenticated" ? (
           <div className="flex flex-row space-x-2 items-center">
             <Button variant="ghost" className="p-2 py-1 rounded-md  ">
@@ -96,9 +99,6 @@ const Usermenu = (props: Props) => {
             <Button variant="ghost" className="px-2 py-2 m-0">
               <Icons.heart className="h-6 w-6" />
             </Button>
-            <Button variant="default" className="font-semibold">
-              POST
-            </Button>
           </div>
         ) : (
           <div className="flex flex-row space-x-2 ">
@@ -112,15 +112,19 @@ const Usermenu = (props: Props) => {
                 Register
               </Button>
             </DialogTrigger>
-            <Button variant="default" className="font-semibold">
-              POST
-            </Button>
           </div>
         )}
         {active === "Register" && <RegisterDialog />}
         {active === "Login" && <LoginDialog />}
-      </Dialog>
-    </>
+        <Button
+          onClick={handlePost}
+          variant="default"
+          className="font-semibold"
+        >
+          POST
+        </Button>
+      </div>
+    </Dialog>
   )
 }
 
