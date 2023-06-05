@@ -25,7 +25,10 @@ interface LocationSearchProps {
   onSetValue: (value: string) => void
 }
 
-export function LocationSearch({ value, onSetValue }: LocationSearchProps) {
+const LocationSearch: React.FC<LocationSearchProps> = ({
+  value,
+  onSetValue,
+}) => {
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [inputValue, setInputValue] = React.useState("")
@@ -76,7 +79,7 @@ export function LocationSearch({ value, onSetValue }: LocationSearchProps) {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 ">
+      <PopoverContent className="w-[300px] p-0">
         <Command className="w-full">
           <CommandInput
             className="placeholder:text-muted-foreground"
@@ -115,3 +118,5 @@ export function LocationSearch({ value, onSetValue }: LocationSearchProps) {
     </Popover>
   )
 }
+
+export default LocationSearch

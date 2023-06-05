@@ -1,12 +1,15 @@
 import {
   Bed,
   CalendarClock,
+  CalendarDays,
   ChevronDown,
   Heart,
+  ImagePlus,
   LogOut,
   LucideProps,
   MessageSquare,
   User,
+  XCircle,
   type Icon as LucideIcon,
 } from "lucide-react"
 
@@ -41,4 +44,7 @@ export const Icons = {
   user: User,
   chat: MessageSquare,
   chevron: ChevronDown,
+  calendarPick: CalendarDays,
+  imageUpload: ImagePlus,
+  closeCircle: XCircle,
 }

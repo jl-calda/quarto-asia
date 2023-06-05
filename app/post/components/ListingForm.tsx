@@ -1,12 +1,10 @@
 "use client"
 
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { houses, rooms } from "@/config/navbar"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -17,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
 import {
   Form,
   FormControl,
@@ -28,9 +25,12 @@ import {
   FormMessage,
 } from "@/components/react-hook-form/form"
 
-import { LocationSearch } from "./LocationSearch"
+import DatePick from "./DatePick"
+import ImageUpload from "./ImageUpload"
+import LocationSearch from "./LocationSearch"
 
 const listingFormSchema = z.object({
+  images: z.array(z.string()),
   title: z
     .string()
     .min(10, {
@@ -42,6 +42,7 @@ const listingFormSchema = z.object({
   price: z.coerce.number().min(0),
   location: z.string(),
   unit: z.string().optional(),
+  availability: z.date(),
   description: z.string().max(160).min(4),
   house: z.string(),
   room: z.string(),
@@ -59,10 +60,12 @@ type ProfileFormValues = z.infer<typeof listingFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
+  images: [],
   title: "",
   price: 0,
   location: "",
   unit: "",
+  availability: new Date(),
   description: "",
   house: "",
   room: "",
@@ -71,23 +74,32 @@ const defaultValues: Partial<ProfileFormValues> = {
 }
 
 const ListingForm = () => {
-  const { watch, setValue } = useForm()
-  const location = watch("location")
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(listingFormSchema),
-    defaultValues: { ...defaultValues, location: "" },
+    defaultValues: { ...defaultValues },
     mode: "onChange",
   })
-
-  // console.log("location", location)
-
   function onSubmit(data: ProfileFormValues) {
-    console.log("data", { ...data, location: location })
+    console.log("data", data)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Upload Images</FormLabel>
+              <FormControl>
+                <ImageUpload value={field.value} onChange={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="grid grid-cols-4 gap-x-2">
           <FormField
             control={form.control}
@@ -102,7 +114,6 @@ const ListingForm = () => {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="price"
@@ -112,7 +123,9 @@ const ListingForm = () => {
                 <FormControl>
                   <Input type="number" placeholder="0" {...field} />
                 </FormControl>
-                <FormDescription>SGD per month</FormDescription>
+                <FormDescription className="text-xs">
+                  SGD per month
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -126,27 +139,42 @@ const ListingForm = () => {
               <FormLabel>Location</FormLabel>
               <FormControl>
                 <LocationSearch
-                  value={location}
-                  onSetValue={(value) => setValue("location", value)}
+                  value={field.value}
+                  onSetValue={(value) => field.onChange(value)}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="unit"
-          render={({ field }) => (
-            <FormItem className="col-span-3">
-              <FormLabel>Unit No.</FormLabel>
-              <FormControl>
-                <Input placeholder="Unit X-12..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-x-2">
+          <FormField
+            control={form.control}
+            name="unit"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unit No.</FormLabel>
+                <FormControl>
+                  <Input placeholder="Unit X-12..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="availability"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Availability</FormLabel>
+                <FormControl>
+                  <DatePick selected={field.value} onSelect={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -161,6 +189,10 @@ const ListingForm = () => {
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="text-xs">
+                Enter a short description of your listing. Enter house rules if
+                any.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -212,7 +244,6 @@ const ListingForm = () => {
                       />
                     </SelectTrigger>
                   </FormControl>
-
                   <SelectContent>
                     {rooms.map((room) => (
                       <SelectItem key={crypto.randomUUID()} value={room}>
