@@ -16,7 +16,7 @@ const PostPage = (props: Props) => {
         </p>
       </div>
 
-      <div className="w-full grid max-w-2xl mx-auto">
+      <div className="w-full">
         {/* <ImageUpload /> */}
         <ListingForm />
       </div>

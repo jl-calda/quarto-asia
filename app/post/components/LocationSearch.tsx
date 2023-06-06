@@ -50,11 +50,12 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
         `https://developers.onemap.sg/commonapi/search?searchVal=${inputValue}&returnGeom=Y&getAddrDetails=Y&pageNum=1`
       )
         .then((res) => res.json())
+        .then((data) =>
+          data.results.map((result: any) => transformText(result.ADDRESS))
+        )
         .catch((err) => console.error(err))
         .finally(() => setLoading(false))
-      setData(
-        data?.results?.map((result: any) => transformText(result.ADDRESS))
-      )
+      setData(data)
     }
     getLocation()
   }, [inputValue])
@@ -79,7 +80,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-[81vw] sm:w-[40vw]">
         <Command className="w-full">
           <CommandInput
             className="placeholder:text-muted-foreground"
@@ -107,7 +108,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
                           : "opacity-0"
                       )}
                     /> */}
-                    {transformText(address)}
+                    <span className="inline-block capitalize">{address}</span>
                   </CommandItem>
                 ))}
               </>

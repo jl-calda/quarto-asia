@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { Icons } from "@/components/Icons"
 import {
   Form,
   FormControl,
@@ -86,213 +87,236 @@ const ListingForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Upload Images</FormLabel>
-              <FormControl>
-                <ImageUpload value={field.value} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-4 gap-x-2">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="col-span-3">
-                <FormLabel>Listing Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Room for rent ..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="0" {...field} />
-                </FormControl>
-                <FormDescription className="text-xs">
-                  SGD per month
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem className="col-span-3">
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <LocationSearch
-                  value={field.value}
-                  onSetValue={(value) => field.onChange(value)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid grid-cols-2 gap-x-2">
-          <FormField
-            control={form.control}
-            name="unit"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Unit No.</FormLabel>
-                <FormControl>
-                  <Input placeholder="Unit X-12..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="availability"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Availability</FormLabel>
-                <FormControl>
-                  <DatePick selected={field.value} onSelect={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell something about your listing"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="text-xs">
-                Enter a short description of your listing. Enter house rules if
-                any.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid grid-cols-2 gap-x-2">
-          <FormField
-            control={form.control}
-            name="house"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>House Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+          <div className="w-full sm:h-full h-[60vh] mb-4">
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem className="h-full flex-1 flex flex-col">
+                  <FormLabel>Upload Images</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Type of house" />
-                    </SelectTrigger>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
-
-                  <SelectContent>
-                    {houses.map((house) => (
-                      <SelectItem key={crypto.randomUUID()} value={house}>
-                        {house}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="room"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Room Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                  <FormDescription className="text-xs">
+                    Upload maximum of 6 images
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex-1">
+            <div className="grid grid-cols-5 gap-x-2">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel>Listing Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Room for rent ..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="col-span-2 relative">
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <>
+                        <Input
+                          className="pl-8"
+                          type="number"
+                          placeholder="0"
+                          {...field}
+                        />
+                        <Icons.dollar className="absolute w-4 h-4 top-[37px] left-2 text-gray-400" />
+                      </>
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Rent per month
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem className="col-span-3 mb-4">
+                  <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        key={crypto.randomUUID()}
-                        placeholder="Type of room"
+                    <LocationSearch
+                      value={field.value}
+                      onSetValue={(value) => field.onChange(value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-x-2 mb-4">
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit No.</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Whats the unit number?" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="availability"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Availability</FormLabel>
+                    <FormControl>
+                      <DatePick
+                        selected={field.value}
+                        onSelect={field.onChange}
                       />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {rooms.map((room) => (
-                      <SelectItem key={crypto.randomUUID()} value={room}>
-                        {room}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-x-2">
-          <FormField
-            control={form.control}
-            name="tenants"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Total Person in Unit</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="0" {...field} />
-                </FormControl>
-                <FormDescription className="text-xs">
-                  Includes the future tenant of the unit.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="roommates"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Total Person in Room</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="0" {...field} />
-                </FormControl>
-                <FormDescription className="text-xs">
-                  Includes the future tenant of the unit.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        <Button type="submit">Submit</Button>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell something about your listing"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Enter a short description of your listing. Enter house rules
+                    if any.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-x-2 mb-4">
+              <FormField
+                control={form.control}
+                name="house"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>House Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Type of house" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        {houses.map((house) => (
+                          <SelectItem key={crypto.randomUUID()} value={house}>
+                            {house}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="room"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Room Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            key={crypto.randomUUID()}
+                            placeholder="Type of room"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {rooms.map((room) => (
+                          <SelectItem key={crypto.randomUUID()} value={room}>
+                            {room}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-x-2">
+              <FormField
+                control={form.control}
+                name="tenants"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Person in Unit</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="0" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Includes the future tenant of the unit.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="roommates"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Person in Room</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="0" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Includes the future tenant of the unit.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button className="w-full mt-4" type="submit">
+              Submit
+            </Button>
+          </div>
+        </div>
       </form>
     </Form>
   )

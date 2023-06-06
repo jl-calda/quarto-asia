@@ -3,6 +3,7 @@ import {
   CalendarClock,
   CalendarDays,
   ChevronDown,
+  DollarSign,
   Heart,
   ImagePlus,
   LogOut,
@@ -47,4 +48,5 @@ export const Icons = {
   calendarPick: CalendarDays,
   imageUpload: ImagePlus,
   closeCircle: XCircle,
+  dollar: DollarSign,
 }
