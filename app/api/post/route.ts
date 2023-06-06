@@ -15,18 +15,11 @@ export async function POST(request: Request) {
     const newListing = await prisma.listing.create({
       data: {
         ...body,
-        userid: {
-          connect: {
-            id: currentUser.id,
-          },
-        },
-      },
-      include: {
-        user: true,
+        userid: currentUser.id,
       },
     })
 
-    return new NextResponse(JSON.stringify(newListing))
+    return NextResponse.json(newListing)
   } catch (e) {
     console.log(e)
     return new NextResponse("Internal Server Error", { status: 500 })

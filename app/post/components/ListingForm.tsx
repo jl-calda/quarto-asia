@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "axios"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -80,8 +81,9 @@ const ListingForm = () => {
     defaultValues: { ...defaultValues },
     mode: "onChange",
   })
-  function onSubmit(data: ProfileFormValues) {
-    console.log("data", data)
+  const onSubmit = (data: ProfileFormValues) => {
+    console.log(data)
+    axios.post("/api/post", data)
   }
 
   return (
