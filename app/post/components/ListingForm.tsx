@@ -87,7 +87,7 @@ const ListingForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
           <div className="w-full sm:h-full h-[60vh] mb-4">
             <FormField
               control={form.control}

@@ -45,13 +45,14 @@ const Usermenu = () => {
     <Dialog>
       <div className="flex flex-row item sm:gap-x-2">
         {session.status === "authenticated" ? (
-          <div className="flex flex-row space-x-2 items-center">
+          <div className="flex flex-row sm:space-x-2 items-center">
             <DropdownMenu>
               <DropdownMenuTrigger className="flex flex-row space-x-2 items-center rounded-md hover:bg-accent hover:text-accent-foreground">
                 <Avatar>
                   <AvatarImage src={session?.data?.user?.image || undefined} />
                   <AvatarFallback>{"A"}</AvatarFallback>
                 </Avatar>
+
                 <span className="text-sm">{`Hello, ${
                   session?.data?.user?.name?.split(" ")[0]
                 }`}</span>
@@ -64,26 +65,41 @@ const Usermenu = () => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DialogTrigger asChild>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Icons.user className="mr-4 h-4 w-4" />
                     <span>Account</span>
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
                   <Icons.heart className="mr-4 h-4 w-4" />
                   <span>Favorites</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
                   <Icons.calendar className="mr-4 h-4 w-4" />
                   <span>Viewings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
                   <Icons.bed className="mr-4 h-4 w-4" />
                   <span>Listings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Button
+                      onClick={handlePost}
+                      variant="default"
+                      className="font-semibold w-full"
+                    >
+                      Post
+                    </Button>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => signOut()}
+                >
                   <Icons.logout className="mr-4 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>
@@ -116,7 +132,7 @@ const Usermenu = () => {
         <Button
           onClick={handlePost}
           variant="default"
-          className="font-semibold"
+          className="font-semibold hidden sm:block"
         >
           Post
         </Button>

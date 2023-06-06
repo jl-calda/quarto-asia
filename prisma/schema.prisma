@@ -11,33 +11,75 @@ datasource db {
 }
 
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String?
-  email String? @unique
-  emailVerified DateTime?
-  image String?
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
   hashedPassword String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   accounts Account[]
 }
 
 model Account {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  type String
-  provider String
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
   providerAccountId String
-  refresh_token String? @db.String
-  access_token String? @db.String
-  expires_at Int?
-  token_type String?
-  scope String?
-  id_token String? @db.String
-  session_state String?
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
 
-  user User @relation(fields:[userId], references:[id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+// images: z.array(z.string()),
+//   title: z
+//     .string()
+//     .min(10, {
+//       message: "Title must be at least 10 characters.",
+//     })
+//     .max(60, {
+//       message: "Title must not be longer than 30 characters.",
+//     }),
+//   price: z.coerce.number().min(0),
+//   location: z.string(),
+//   unit: z.string().optional(),
+//   availability: z.date(),
+//   description: z.string().max(160).min(4),
+//   house: z.string(),
+//   room: z.string(),
+//   tenants: z.coerce
+//     .number()
+//     .min(1)
+//     .max(6, { message: "Maximum allowed as HDB is 6 registered tenants" }),
+//   roommates: z.coerce
+//     .number()
+//     .min(1)
+//     .max(6, { 
+
+model Listing {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  price        Float
+  location     String
+  unit         String
+  availability DateTime
+  description  String
+  images       String[]
+  house        String
+  room         String
+  tenants      Int
+  roommates    Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
