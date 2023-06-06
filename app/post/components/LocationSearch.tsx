@@ -55,6 +55,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
         )
         .catch((err) => console.error(err))
         .finally(() => setLoading(false))
+      console.log("data", data)
       setData(data)
     }
     getLocation()
@@ -67,7 +68,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`justify-between w-full text-left h-auto`}
+          className={`justify-between w-full text-left h-auto active:outline-none active:ring-2 active:ring-offset-2 active:ring-ring`}
         >
           <span
             className={`font-normal text-ellipsis ${
@@ -93,6 +94,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
               <>
                 {data?.map((address) => (
                   <CommandItem
+                    className="cursor-pointer"
                     value={address}
                     key={crypto.randomUUID()}
                     onSelect={(address) => {
@@ -108,7 +110,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
                           : "opacity-0"
                       )}
                     /> */}
-                    <span className="inline-block capitalize">{address}</span>
+                    <span>{address}</span>
                   </CommandItem>
                 ))}
               </>

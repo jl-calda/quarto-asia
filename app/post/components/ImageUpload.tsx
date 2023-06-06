@@ -1,72 +1,82 @@
 "use client"
 
+import { on } from "events"
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import { DialogTrigger } from "@radix-ui/react-dialog"
+import { set } from "date-fns"
 import { CldUploadWidget } from "next-cloudinary"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { useToast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/Icons"
 
 interface ImageCarouselProps {
   images: string[]
   onChange: (value: string[]) => void
 }
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
-  const [activeImage, setActiveImage] = useState("")
+const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
+  const [loading, setLoading] = useState(false)
+  const [dialogImage, setDialogImage] = useState("")
 
   const handleUpload = useCallback(
-    (result: any) => {
-      images.push(result.info.secure_url)
-      onChange(images)
+    async (result: any) => {
+      setLoading(true)
+      const updateImages = async () =>
+        onChange([...images, await result.info.secure_url])
+      await updateImages().then(() => setLoading(false))
     },
-    [onChange]
+    [onChange, images]
   )
 
-  const array = [0, 1, 2, 3, 4, 5]
+  const dummyPhotoArr = Array.from({ length: 6 - images.length }, (v, i) => i)
+
   const handleDelete = useCallback(
-    (image: string) => {
-      const newImages = images.filter((img) => img !== image)
-      onChange(newImages)
+    async (image: string) => {
+      const updateImages = async () =>
+        onChange(images.filter((img) => img !== image))
+      await updateImages()
     },
     [onChange, images]
   )
   return (
     <Dialog>
       <div className="grid grid-cols-2 grid-rows-3 sm:grid-cols-1 md:grid-cols-2 md:grid-rows-3 sm:grid-rows-6 gap-x-2 gap-y-2 h-full w-full">
-        {images.map((image) => (
-          <DialogTrigger>
-            <div
-              onClick={() => setActiveImage(image)}
-              className="relative w-full flex-1 h-full flex flex-col"
-            >
-              <Image
-                src={image}
-                fill
-                className="object-cover object-center rounded-md"
-                alt="posting image"
-              />
+        {!loading &&
+          images.map((image) => (
+            <div className="relative w-full flex-1 h-full flex flex-col">
+              <DialogTrigger>
+                <Image
+                  src={image}
+                  fill
+                  onClick={() => setDialogImage(image)}
+                  className="object-cover object-center rounded-md"
+                  alt="posting image"
+                />
+              </DialogTrigger>
               <Button
                 onClick={() => handleDelete(image)}
                 variant="secondary"
-                className="p-0 m-0 absolute h-auto w-auto top-0 right-0 hover:bg-red-200 rounded-full"
+                className="p-2 bg-transparent m-0 absolute h-auto w-auto top-0 right-0 hover:scale-105 rounded-full"
               >
-                <Icons.closeCircle className="w-4 h-4" color="gray" />
+                <Icons.closeCircle className="w-4 h-4" color="white" />
               </Button>
             </div>
-          </DialogTrigger>
-        ))}
-        {array.map((item) => (
+          ))}
+        {dummyPhotoArr.map((item) => (
           <CldUploadWidget
+            onOpen={() => setLoading(true)}
             onUpload={handleUpload}
-            options={{ maxFiles: 1 }}
+            options={{ maxFiles: images.length }}
             uploadPreset="quarto-preset"
+            onClose={() => setLoading(false)}
           >
             {({ open }) => {
               return (
-                <div onClick={() => open()} className="relative w-full h-full">
+                <div className="relative w-full h-full">
                   <Image
+                    onClick={() => open()}
                     src={"/images/placeholder-image.png"}
                     fill
                     className="object-cover object-center bg-accent cursor-pointer"
@@ -78,13 +88,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
           </CldUploadWidget>
         ))}
       </div>
-      <DialogContent className="">
+      <DialogContent className="m-4">
         <div
           key={crypto.randomUUID()}
           className="relative w-full h-[400px] p-6"
         >
           <Image
-            src={activeImage}
+            src={dialogImage}
             fill
             className="object-cover object-center bg-accent"
             alt="posting image"
@@ -101,23 +111,32 @@ interface ImageUploadProps {
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
+  const [available, setAvailable] = useState(6 - value.length)
+
+  useEffect(() => {
+    setAvailable(() => 6 - value.length)
+  }, [value])
+
+  const [loading, setLoading] = useState(false)
   const handleUpload = useCallback(
-    (result: any) => {
-      value.push(result.info.secure_url)
-      onChange(value)
-      console.log(value)
+    async (result: any) => {
+      const updateImages = async () =>
+        onChange([...value, await result.info.secure_url])
+      await updateImages()
     },
-    [onChange]
+    [onChange, value]
   )
   return (
     <CldUploadWidget
+      onOpen={() => setLoading(true)}
       onUpload={handleUpload}
-      options={{ maxFiles: 6 }}
+      options={{ maxFiles: value.length }}
       uploadPreset="quarto-preset"
+      onClose={() => setLoading(false)}
     >
       {({ open }) => {
-        if (value.length > 0)
-          return <ImageCarousel images={value} onChange={onChange} />
+        if (value.length > 0 && !loading)
+          return <ImageGrid images={value} onChange={onChange} />
         return (
           <div
             className="w-full border rounded-md flex-1 h-full items-center justify-center flex bg-accent/50 hover:bg-accent hover:ring-2 hover:ring-ring hover:ring-offset-2 cursor-pointer"

@@ -278,7 +278,7 @@ const ListingForm = () => {
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-x-2">
+            <div className="grid grid-cols-2 gap-x-2 mb-4">
               <FormField
                 control={form.control}
                 name="tenants"

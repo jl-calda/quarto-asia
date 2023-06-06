@@ -43,7 +43,7 @@ const Usermenu = () => {
 
   return (
     <Dialog>
-      <div className="flex flex-row item gap-x-2">
+      <div className="flex flex-row item sm:gap-x-2">
         {session.status === "authenticated" ? (
           <div className="flex flex-row space-x-2 items-center">
             <DropdownMenu>
@@ -91,10 +91,10 @@ const Usermenu = () => {
             </DropdownMenu>
 
             <Button variant="ghost" className="px-2 py-2 m-0">
-              <Icons.chat className="h-6 w-6" />
+              <Icons.chat className="h-5 w-5" />
             </Button>
             <Button variant="ghost" className="px-2 py-2 m-0">
-              <Icons.heart className="h-6 w-6" />
+              <Icons.heart className="h-5 w-5" />
             </Button>
           </div>
         ) : (
@@ -118,7 +118,7 @@ const Usermenu = () => {
           variant="default"
           className="font-semibold"
         >
-          POST
+          Post
         </Button>
       </div>
     </Dialog>
