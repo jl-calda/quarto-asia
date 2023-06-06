@@ -1,7 +1,10 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
+import { set } from "date-fns"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -16,6 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/Icons"
 import {
   Form,
@@ -76,14 +81,44 @@ const defaultValues: Partial<ProfileFormValues> = {
 }
 
 const ListingForm = () => {
+  const router = useRouter()
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(listingFormSchema),
     defaultValues: { ...defaultValues },
     mode: "onChange",
   })
   const onSubmit = (data: ProfileFormValues) => {
-    console.log(data)
-    axios.post("/api/post", data)
+    setIsLoading(true)
+    axios
+      .post("/api/post", data)
+      .then((data: any) => {
+        console.log(data)
+        toast({
+          variant: "default",
+          title: "Success!",
+          description: "Your listing has been created",
+          action: (
+            <ToastAction
+              onClick={() => router.push(`/listing/${data.data.id}`)}
+              altText="Try again"
+            >
+              View Listing
+            </ToastAction>
+          ),
+        })
+      })
+      .then(() => {
+        form.reset(defaultValues)
+      })
+      .catch((err) =>
+        toast({
+          title: "Something Went Wrong!",
+          description: "Please check your inputs and try again",
+        })
+      )
+      .finally(() => setIsLoading(false))
   }
 
   return (
@@ -120,7 +155,11 @@ const ListingForm = () => {
                   <FormItem className="col-span-3">
                     <FormLabel>Listing Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Room for rent ..." {...field} />
+                      <Input
+                        disabled={isLoading}
+                        placeholder="Room for rent ..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -135,6 +174,7 @@ const ListingForm = () => {
                     <FormControl>
                       <>
                         <Input
+                          disabled={isLoading}
                           className="pl-8"
                           type="number"
                           placeholder="0"
@@ -175,7 +215,11 @@ const ListingForm = () => {
                   <FormItem>
                     <FormLabel>Unit No.</FormLabel>
                     <FormControl>
-                      <Input placeholder="Whats the unit number?" {...field} />
+                      <Input
+                        disabled={isLoading}
+                        placeholder="Whats the unit number?"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -207,6 +251,7 @@ const ListingForm = () => {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
+                      disabled={isLoading}
                       placeholder="Tell something about your listing"
                       className="resize-none"
                       {...field}
@@ -228,6 +273,7 @@ const ListingForm = () => {
                   <FormItem>
                     <FormLabel>House Type</FormLabel>
                     <Select
+                      disabled={isLoading}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
@@ -256,6 +302,7 @@ const ListingForm = () => {
                   <FormItem>
                     <FormLabel>Room Type</FormLabel>
                     <Select
+                      disabled={isLoading}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
@@ -288,7 +335,12 @@ const ListingForm = () => {
                   <FormItem>
                     <FormLabel>Total Person in Unit</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0" {...field} />
+                      <Input
+                        disabled={isLoading}
+                        type="number"
+                        placeholder="0"
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription className="text-xs">
                       Includes the future tenant of the unit.
@@ -304,7 +356,12 @@ const ListingForm = () => {
                   <FormItem>
                     <FormLabel>Total Person in Room</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0" {...field} />
+                      <Input
+                        disabled={isLoading}
+                        type="number"
+                        placeholder="0"
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription className="text-xs">
                       Includes the future tenant of the unit.
@@ -314,7 +371,7 @@ const ListingForm = () => {
                 )}
               />
             </div>
-            <Button className="w-full mt-4" type="submit">
+            <Button disabled={isLoading} className="w-full mt-4" type="submit">
               Submit
             </Button>
           </div>

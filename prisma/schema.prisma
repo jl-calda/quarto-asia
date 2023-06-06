@@ -21,6 +21,7 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   accounts Account[]
+  listings Listing[]
 }
 
 model Account {
@@ -80,6 +81,9 @@ model Listing {
   room         String
   tenants      Int
   roommates    Int
+  userId       String   @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

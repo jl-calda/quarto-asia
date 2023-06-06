@@ -72,7 +72,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
         >
           <span
             className={`font-normal text-ellipsis ${
-              value !== "" ? "text-muted-foreground" : "text-muted-foreground"
+              value !== "" ? "" : "text-muted-foreground"
             }`}
           >
             {value ? value : "What your location..."}

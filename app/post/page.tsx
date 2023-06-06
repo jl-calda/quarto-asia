@@ -1,7 +1,3 @@
-import React from "react"
-import { List } from "lucide-react"
-
-import ImageUpload from "./components/ImageUpload"
 import ListingForm from "./components/ListingForm"
 
 type Props = {}
@@ -16,8 +12,7 @@ const PostPage = (props: Props) => {
         </p>
       </div>
 
-      <div className="w-full">
-        {/* <ImageUpload /> */}
+      <div className="w-full max-w-6xl mx-auto">
         <ListingForm />
       </div>
     </div>

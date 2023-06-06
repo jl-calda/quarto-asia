@@ -1,15 +1,19 @@
 import {
   Bed,
+  BedDouble,
+  BedSingle,
   CalendarClock,
   CalendarDays,
   ChevronDown,
   DollarSign,
   Heart,
+  Home,
   ImagePlus,
   LogOut,
   LucideProps,
   MessageSquare,
   User,
+  Users,
   XCircle,
   type Icon as LucideIcon,
 } from "lucide-react"
@@ -49,4 +53,8 @@ export const Icons = {
   imageUpload: ImagePlus,
   closeCircle: XCircle,
   dollar: DollarSign,
+  houseTenants: Home,
+  people: Users,
+  bedSingle: BedSingle,
+  bedDouble: BedDouble,
 }

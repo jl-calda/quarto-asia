@@ -1,15 +1,28 @@
 import { useRef } from "react"
 import Link from "next/link"
+import { List } from "lucide-react"
 
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import DemoCreateAccount from "@/components/navbar/dialogs/RegisterContent"
 
-export default function IndexPage() {
+import getListings, { IListingParams } from "../actions/getListings"
+import ListingCard from "./components/ListingCard"
+
+const HomePage = async ({ searchParams }: { searchParams: IListingParams }) => {
+  const listings = await getListings(searchParams)
+  console.log(listings)
   return (
-    <div>
-      <div></div>
-    </div>
+    <section className="container pt-6 pb-16">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold tracking-tight">Latest listings</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-6">
+        {listings?.map((listing) => (
+          <ListingCard key={crypto.randomUUID()} listing={listing} />
+        ))}
+      </div>
+    </section>
     // <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
     //   <div className="flex max-w-[980px] flex-col items-start gap-2">
     //     {/* <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
@@ -42,3 +55,5 @@ export default function IndexPage() {
     // </section>
   )
 }
+
+export default HomePage
