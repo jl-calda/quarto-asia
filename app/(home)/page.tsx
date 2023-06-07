@@ -13,7 +13,7 @@ const HomePage = async ({ searchParams }: { searchParams: IListingParams }) => {
   const listings = await getListings(searchParams)
   console.log(listings)
   return (
-    <section className="container pt-6 pb-16">
+    <section className="container pt-6 pb-16 px-2 sm:px-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Latest listings</h2>
       </div>
