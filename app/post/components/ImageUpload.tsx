@@ -45,7 +45,10 @@ const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
       <div className="grid grid-cols-2 grid-rows-3 sm:grid-cols-1 md:grid-cols-2 md:grid-rows-3 sm:grid-rows-6 gap-x-2 gap-y-2 h-full w-full">
         {!loading &&
           images.map((image) => (
-            <div className="relative w-full flex-1 h-full flex flex-col">
+            <div
+              key={crypto.randomUUID()}
+              className="relative w-full flex-1 h-full flex flex-col"
+            >
               <DialogTrigger>
                 <Image
                   src={image}
@@ -66,6 +69,7 @@ const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
           ))}
         {dummyPhotoArr.map((item) => (
           <CldUploadWidget
+            key={crypto.randomUUID()}
             onOpen={() => setLoading(true)}
             onUpload={handleUpload}
             options={{ maxFiles: images.length }}

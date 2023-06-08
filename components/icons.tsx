@@ -15,6 +15,7 @@ import {
   ImagePlus,
   LogOut,
   LucideProps,
+  MapPin,
   MessageSquare,
   User,
   Users,
@@ -64,4 +65,5 @@ export const Icons = {
   calendarCheck: CalendarCheck,
   chevronRight: ChevronRight,
   chevronLeft: ChevronLeft,
+  mapPin: MapPin,
 }

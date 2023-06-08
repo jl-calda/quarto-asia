@@ -1,10 +1,10 @@
 "use client"
 
+// import Image from "next/image"
 import L from "leaflet"
-import { MapContainer, Marker, TileLayer } from "react-leaflet"
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 
 import "leaflet/dist/leaflet.css"
-import { use, useEffect, useState } from "react"
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
 import markerIcon from "leaflet/dist/images/marker-icon.png"
 import markerShadow from "leaflet/dist/images/marker-shadow.png"
@@ -18,51 +18,27 @@ L.Icon.Default.mergeOptions({
 })
 
 interface MapProps {
+  latitude: number
+  longitude: number
   location: string
 }
-const Map: React.FC<MapProps> = ({ location }) => {
-  const [lat, setLat] = useState(0)
-  const [lng, setLng] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("fetching")
-      console.log(location)
-      setIsLoading(true)
-      const res = await fetch(
-        `https://developers.onemap.sg/commonapi/search?searchVal=${
-          location.split(" ")[-1]
-        }&returnGeom=Y&getAddrDetails=Y&pageNum=1`
-      )
-        .then((res) => res.json())
-        .then((address) => {
-          setLng(parseFloat(address.results[0].LONGITUDE))
-          setLat(parseFloat(address.results[0].LATITUDE))
-        })
-        .finally(() => setIsLoading(false))
-      console.log("res", res)
-    }
-    fetchData()
-  }, [location])
-
+const Map: React.FC<MapProps> = ({ latitude, longitude, location }) => {
+  const center = [latitude, longitude]
   return (
-    <>
-      {!isLoading && (
-        // <MapContainer
-        //   center={coord || [51, -0.09]}
-        //   zoom={coord ? 4 : 2}
-        //   scrollWheelZoom={false}
-        //   className="h-[35vh] rounded-lg"
-        // >
-        //   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        //   {coord && <Marker position={coord as L.LatLngExpression} />}
-        // </MapContainer>
-        <img
-          src={`https://developers.onemap.sg/commonapi/staticmap/getStaticImage?layerchosen=default&lat=${lat}&lng=${lng}&zoom=17&height=512&width=512`}
-        />
-      )}
-    </>
+    <MapContainer
+      center={center as L.LatLngExpression}
+      zoom={15}
+      scrollWheelZoom={false}
+      className="h-full rounded-md z-10"
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Marker position={center as L.LatLngExpression}>
+        <Popup>{location}</Popup>
+      </Marker>
+    </MapContainer>
   )
 }
 

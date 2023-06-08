@@ -48,6 +48,8 @@ const listingFormSchema = z.object({
     }),
   price: z.coerce.number().min(0),
   location: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
   unit: z.string().optional(),
   availability: z.date(),
   description: z.string().max(160).min(4),
@@ -71,6 +73,8 @@ const defaultValues: Partial<ProfileFormValues> = {
   title: "",
   price: 0,
   location: "",
+  latitude: 0,
+  longitude: 0,
   unit: "",
   availability: new Date(),
   description: "",
@@ -81,6 +85,9 @@ const defaultValues: Partial<ProfileFormValues> = {
 }
 
 const ListingForm = () => {
+  const { setValue, watch } = useForm()
+  const latitude = watch("latitude")
+  const longitude = watch("longitude")
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
@@ -90,11 +97,15 @@ const ListingForm = () => {
     mode: "onChange",
   })
   const onSubmit = (data: ProfileFormValues) => {
+    const updatedData = {
+      ...data,
+      latitude,
+      longitude,
+    }
     setIsLoading(true)
     axios
-      .post("/api/post", data)
+      .post("/api/post", updatedData)
       .then((data: any) => {
-        console.log(data)
         toast({
           variant: "default",
           title: "Success!",
@@ -199,6 +210,8 @@ const ListingForm = () => {
                   <FormLabel>Location</FormLabel>
                   <FormControl>
                     <LocationSearch
+                      onSetLatitude={(value) => setValue("latitude", value)}
+                      onSetLongitude={(value) => setValue("longitude", value)}
                       value={field.value}
                       onSetValue={(value) => field.onChange(value)}
                     />

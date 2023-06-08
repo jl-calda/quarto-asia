@@ -1,5 +1,6 @@
 "use client"
 
+import { on } from "events"
 import * as React from "react"
 import { useEffect } from "react"
 import { CommandList } from "cmdk"
@@ -23,16 +24,34 @@ import {
 interface LocationSearchProps {
   value: string
   onSetValue: (value: string) => void
+  onSetLatitude: (value: number) => void
+  onSetLongitude: (value: number) => void
+}
+
+export type LocationType = {
+  ADDRESS: string
+  BLK_NO: string
+  BUILDING: string
+  LATITUDE: string
+  LONGITUDE: string
+  LONGTITUDE: string
+  POSTAL: string
+  ROAD_NAME: string
+  SEARCHVAL: string
+  X: string
+  Y: string
 }
 
 const LocationSearch: React.FC<LocationSearchProps> = ({
   value,
   onSetValue,
+  onSetLatitude,
+  onSetLongitude,
 }) => {
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [inputValue, setInputValue] = React.useState("")
-  const [data, setData] = React.useState([])
+  const [data, setData] = React.useState<LocationType[]>([])
 
   // console.log("value", value)
   const transformText = (text: string) => {
@@ -50,9 +69,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
         `https://developers.onemap.sg/commonapi/search?searchVal=${inputValue}&returnGeom=Y&getAddrDetails=Y&pageNum=1`
       )
         .then((res) => res.json())
-        .then((data) =>
-          data.results.map((result: any) => transformText(result.ADDRESS))
-        )
+        .then((data) => data.results)
         .catch((err) => console.error(err))
         .finally(() => setLoading(false))
       console.log("data", data)
@@ -75,7 +92,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
               value !== "" ? "" : "text-muted-foreground"
             }`}
           >
-            {value ? value : "What your location..."}
+            {value ? transformText(value) : "What your location..."}
           </span>
 
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -92,13 +109,24 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             {loading && <CommandEmpty>Loading...</CommandEmpty>}
             {data?.length !== 0 && !loading && (
               <>
-                {data?.map((address) => (
+                {data?.map((address: any) => (
                   <CommandItem
                     className="cursor-pointer"
-                    value={address}
+                    value={address.ADDRESS}
                     key={crypto.randomUUID()}
                     onSelect={(address) => {
-                      onSetValue(transformText(address))
+                      onSetValue(address)
+
+                      const latitude = data.find(
+                        (item: any) => item.ADDRESS === address.toUpperCase()
+                      )?.LATITUDE
+                      const longitude = data?.find(
+                        (item: any) => item.ADDRESS === address.toUpperCase()
+                      )?.LONGITUDE
+
+                      onSetLatitude(Number(latitude))
+                      onSetLongitude(Number(longitude))
+
                       setOpen(false)
                     }}
                   >
@@ -110,7 +138,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
                           : "opacity-0"
                       )}
                     /> */}
-                    <span>{address}</span>
+                    <span>{transformText(address.ADDRESS)}</span>
                   </CommandItem>
                 ))}
               </>

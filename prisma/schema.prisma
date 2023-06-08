@@ -19,6 +19,7 @@ model User {
   hashedPassword String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  favoriteIds      String[] @db.String
 
   accounts Account[]
   listings Listing[]
@@ -73,6 +74,8 @@ model Listing {
   title        String
   price        Float
   location     String
+  latitude     Float
+  longitude    Float
   unit         String
   availability DateTime
   description  String
@@ -81,6 +84,7 @@ model Listing {
   room         String
   tenants      Int
   roommates    Int
+
   userId       String   @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
