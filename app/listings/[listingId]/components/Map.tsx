@@ -5,6 +5,8 @@ import L from "leaflet"
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 
 import "leaflet/dist/leaflet.css"
+import { useEffect, useMemo, useState } from "react"
+import { getCenter } from "geolib"
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
 import markerIcon from "leaflet/dist/images/marker-icon.png"
 import markerShadow from "leaflet/dist/images/marker-shadow.png"
@@ -18,12 +20,46 @@ L.Icon.Default.mergeOptions({
 })
 
 interface MapProps {
-  latitude: number
-  longitude: number
+  listingLocation: {
+    latitude: number
+    longitude: number
+  }
   location: string
 }
-const Map: React.FC<MapProps> = ({ latitude, longitude, location }) => {
-  const center = [latitude, longitude]
+const Map: React.FC<MapProps> = ({ listingLocation, location }) => {
+  const [loading, setLoading] = useState(true)
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number
+    longitude: number
+  } | null>(null)
+
+  useEffect(() => {
+    const getLocation = () => setLoading(true)
+    window.navigator.geolocation.getCurrentPosition((position) => {
+      setUserLocation({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+    getLocation()
+    setLoading(false)
+  }, [listingLocation, location, loading])
+
+  const center = useMemo(() => {
+    if (!userLocation)
+      return [listingLocation.latitude, listingLocation.longitude]
+    const getCenterCoord = () => getCenter([userLocation, listingLocation])
+    const centerCoord = getCenterCoord()
+    if (centerCoord) {
+      return [centerCoord.latitude, centerCoord.longitude]
+    }
+  }, [
+    userLocation?.latitude,
+    userLocation?.longitude,
+    listingLocation.latitude,
+    listingLocation.longitude,
+  ])
+
   return (
     <MapContainer
       center={center as L.LatLngExpression}
@@ -35,9 +71,32 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, location }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={center as L.LatLngExpression}>
+      <Marker
+        title={location}
+        riseOnHover
+        position={
+          [
+            listingLocation.latitude,
+            listingLocation.longitude,
+          ] as L.LatLngExpression
+        }
+      >
         <Popup>{location}</Popup>
       </Marker>
+      {userLocation && (
+        <Marker
+          title={location}
+          riseOnHover
+          position={
+            [
+              userLocation.latitude,
+              userLocation.longitude,
+            ] as L.LatLngExpression
+          }
+        >
+          <Popup>{location}</Popup>
+        </Marker>
+      )}
     </MapContainer>
   )
 }

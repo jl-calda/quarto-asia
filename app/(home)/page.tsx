@@ -8,11 +8,14 @@ import DemoCreateAccount from "@/components/navbar/dialogs/RegisterContent"
 
 import getCurrentUser from "../actions/getCurrentUser"
 import getListings, { IListingParams } from "../actions/getListings"
+import getLocation from "../actions/getLocation"
 import ListingCard from "./components/ListingCard"
 
 const HomePage = async ({ searchParams }: { searchParams: IListingParams }) => {
   const listings = await getListings(searchParams)
   const currentUser = await getCurrentUser()
+  // const userLocation = await getLocation()
+  // console.log("userLocation", userLocation)
   return (
     <section className="container pt-6 pb-16 px-2 sm:px-8">
       <div className="mb-6">
@@ -21,6 +24,7 @@ const HomePage = async ({ searchParams }: { searchParams: IListingParams }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-6">
         {listings?.map((listing) => (
           <ListingCard
+            // userLocation={userLocation}
             key={crypto.randomUUID()}
             listing={listing}
             currentUser={currentUser}

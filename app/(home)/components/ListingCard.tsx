@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
 import axios from "axios"
 import { formatDistanceToNowStrict, isPast } from "date-fns"
+import getDistance from "geolib/es/getDistance"
+import { GeolibInputCoordinates } from "geolib/es/types"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -26,19 +28,50 @@ import {
 } from "@/components/ui/tooltip"
 import { useToast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/Icons"
+import getLocation from "@/app/actions/getLocation"
 
 interface ListingCardProps {
   listing: Listing & { user: User }
   currentUser: User | null
+  noFooter?: boolean
+  // userLocation?: GeolibInputCoordinates | null
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ listing, currentUser }) => {
+const ListingCard: React.FC<ListingCardProps> = ({
+  listing,
+  currentUser,
+  noFooter,
+  // userLocation,
+}) => {
   const isFavorite = currentUser
     ? listing?.user?.favoriteIds?.includes(currentUser?.id)
     : false
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [userLocation, setUserLocation] =
+    useState<GeolibInputCoordinates | null>(null)
+
+  useEffect(() => {
+    const location = () =>
+      window.navigator.geolocation.getCurrentPosition((position) =>
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+      )
+    location()
+  }, [])
+
+  const distanceFromUser = useMemo(() => {
+    if (!userLocation) return null
+    return (
+      getDistance(userLocation, {
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+      }) / 1000
+    )
+  }, [userLocation, listing.latitude, listing.longitude])
 
   const handleFavorite = () => {
     setLoading(true)
@@ -67,7 +100,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, currentUser }) => {
   }
 
   return (
-    <Card className="h-[50vh] sm:h-[42vh] md:h-[40vh] xl:h-[40vh] w-full flex flex-col border-none px-1">
+    <Card className="h-auto hover:shadow-md w-full flex flex-col border-none px-1">
       <CardHeader className="flex flex-row items-center gap-x-2 p-2">
         <Avatar
           onClick={() => router.push(`/users/${listing.user.id}`)}
@@ -90,7 +123,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, currentUser }) => {
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 h-full flex flex-col space-y-1 p-2">
+      <CardContent className="h-64 sm:h-82 flex flex-col space-y-1 p-2">
         <div className="relative w-full min-h-[55%] mb-4">
           <Image
             onClick={() => router.push(`/listings/${listing.id}`)}
@@ -113,97 +146,100 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, currentUser }) => {
           </CardDescription>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-row gap-y-1 justify-between items-center p-2">
-        <div className="p-0 m-0 flex flex-row gap-x-1 items-center">
-          <Button
-            variant="ghost"
-            className="m-0 p-0 rounded-full w-auto h-auto"
-            onClick={handleFavorite}
-          >
-            <Icons.heart
-              className="h-4 w-4 cursor-pointer"
-              fill={isFavorite ? "pink" : "none"}
-              stroke={isFavorite ? "pink" : "currentColor"}
-            />
-          </Button>
-          <span>{11}</span>
-        </div>
-        <div className="flex flex-row items-center gap-x-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge
-                  variant="secondary"
-                  className="flex flex-row gap-x-1 items-center h-6"
-                >
-                  {!isPast(new Date(listing.availability)) && (
-                    <span className="font-light">{`${
-                      formatDistanceToNowStrict(
-                        new Date(listing.availability)
-                      ).split(" ")[0]
-                    }`}</span>
-                  )}
 
+      {!noFooter && (
+        <CardFooter className="flex flex-row gap-y-1 justify-between items-center p-2">
+          <div className="p-0 m-0 flex flex-row gap-x-1 items-center">
+            <Button
+              variant="ghost"
+              className="m-0 p-0 rounded-full w-auto h-auto"
+              onClick={handleFavorite}
+            >
+              <Icons.heart
+                className="h-4 w-4 cursor-pointer"
+                fill={isFavorite ? "pink" : "none"}
+                stroke={isFavorite ? "pink" : "currentColor"}
+              />
+            </Button>
+            <span>{11}</span>
+          </div>
+          <div className="flex flex-row items-center gap-x-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge
+                    variant="secondary"
+                    className="flex flex-row gap-x-1 items-center h-6"
+                  >
+                    {!isPast(new Date(listing.availability)) && (
+                      <span className="font-light">{`${
+                        formatDistanceToNowStrict(
+                          new Date(listing.availability)
+                        ).split(" ")[0]
+                      }`}</span>
+                    )}
+
+                    {isPast(new Date(listing.availability)) ? (
+                      <Icons.calendarCheck className="h-3 w-3" />
+                    ) : (
+                      <Icons.calendar className="h-3 w-3" />
+                    )}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
                   {isPast(new Date(listing.availability)) ? (
-                    <Icons.calendarCheck className="h-3 w-3" />
+                    <p>Available now</p>
                   ) : (
-                    <Icons.calendar className="h-3 w-3" />
+                    <p>{`Available in ${formatDistanceToNowStrict(
+                      new Date(listing.availability)
+                    )}`}</p>
                   )}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                {isPast(new Date(listing.availability)) ? (
-                  <p>Available now</p>
-                ) : (
-                  <p>{`Available in ${formatDistanceToNowStrict(
-                    new Date(listing.availability)
-                  )}`}</p>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge
-                  variant="secondary"
-                  className="flex flex-row gap-x-1 items-center h-6"
-                >
-                  <span className="font-light">{listing.tenants}</span>
-                  <Icons.people className="h-3 w-3" />
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{`${listing.tenants} ${
-                  listing.tenants > 1 ? "tenants" : "tenant"
-                } in the unit.`}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge
-                  variant="secondary"
-                  className="flex flex-row gap-x-2 items-center h-6"
-                >
-                  {/* <span>{listing.roommates}</span> */}
-                  {listing.roommates > 1 ? (
-                    <Icons.bedDouble className="h-3 w-3" />
-                  ) : (
-                    <Icons.bedSingle className="h-3 w-3" />
-                  )}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{`${
-                  listing.roommates > 1 ? "Sharing room" : "Solo room"
-                }`}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </CardFooter>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge
+                    variant="secondary"
+                    className="flex flex-row gap-x-1 items-center h-6"
+                  >
+                    <span className="font-light">{listing.tenants}</span>
+                    <Icons.people className="h-3 w-3" />
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{`${listing.tenants} ${
+                    listing.tenants > 1 ? "tenants" : "tenant"
+                  } in the unit.`}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge
+                    variant="secondary"
+                    className="flex flex-row gap-x-2 items-center h-6"
+                  >
+                    {/* <span>{listing.roommates}</span> */}
+                    {listing.roommates > 1 ? (
+                      <Icons.bedDouble className="h-3 w-3" />
+                    ) : (
+                      <Icons.bedSingle className="h-3 w-3" />
+                    )}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{`${
+                    listing.roommates > 1 ? "Sharing room" : "Solo room"
+                  }`}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </CardFooter>
+      )}
     </Card>
   )
 }

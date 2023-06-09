@@ -33,6 +33,14 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
 
   const handleFavorite = () => {
     setLoading(true)
+
+    if (!currentUser) {
+      return toast({
+        title: "Unauthorized",
+        description: "You must be logged in to favorite a listing",
+      })
+    }
+
     axios
       .post(`/api/favorite`, { listingId })
       .then(() =>

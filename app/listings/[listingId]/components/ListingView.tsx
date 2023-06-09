@@ -1,15 +1,12 @@
 "use client"
 
-import React from "react"
+import { get } from "http"
+import React, { useEffect, useMemo, useState } from "react"
 import { Listing, User } from "@prisma/client"
 import { formatDistance } from "date-fns"
+import { getCenter, getDistance } from "geolib"
+import { GeolibInputCoordinates, UserInputCoordinates } from "geolib/es/types"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Icons } from "@/components/Icons"
 
@@ -23,8 +20,35 @@ interface ListingViewProps {
     user: User
   }
 }
+export type LocationType = {
+  latitude: number
+  longitude: number
+}
 
 const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
+  const listingLocation: LocationType = {
+    latitude: listing.latitude,
+    longitude: listing.longitude,
+  }
+
+  const [userLocation, setUserLocation] = useState<LocationType | null>(null)
+
+  useEffect(() => {
+    const getLocation = () =>
+      window.navigator.geolocation.getCurrentPosition((position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+      })
+    getLocation()
+  }, [])
+
+  const distance = useMemo(() => {
+    if (!userLocation) return null
+    return getDistance(userLocation, listingLocation) / 1000
+  }, [userLocation, listingLocation])
+
   const transformedLocation = listing.location
     ?.split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -70,14 +94,17 @@ const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
             <Separator className="w-auto flex-1 mx-4" />
           </div>
           <div className="flex flex-row items-center">
-            <Icons.mapPin className="w-6 h-6 mr-2" />
+            <Icons.mapPin className="w-4 h-4 mr-2" />
             <span>{transformedLocation}</span>
+          </div>
+          <div className="flex flex-row items-center">
+            <Icons.ruler className="w-4 h-4 mr-2" />
+            <span>{distance} km away</span>
           </div>
           <div></div>
           <div className="pr-8 flex-1">
             <Map
-              latitude={listing.latitude}
-              longitude={listing.longitude}
+              listingLocation={listingLocation}
               location={transformedLocation}
             />
           </div>

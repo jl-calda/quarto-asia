@@ -22,6 +22,7 @@ const OtherListings: React.FC<OtherListingProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-4">
         {listings.map((listing) => (
           <ListingCard
+            noFooter
             key={crypto.randomUUID()}
             listing={listing}
             currentUser={currentUser}

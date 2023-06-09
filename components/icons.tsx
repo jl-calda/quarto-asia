@@ -17,6 +17,7 @@ import {
   LucideProps,
   MapPin,
   MessageSquare,
+  Ruler,
   User,
   Users,
   XCircle,
@@ -66,4 +67,5 @@ export const Icons = {
   chevronRight: ChevronRight,
   chevronLeft: ChevronLeft,
   mapPin: MapPin,
+  ruler: Ruler,
 }
