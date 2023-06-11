@@ -152,7 +152,7 @@ const ListingForm = () => {
                   <FormDescription className="text-xs">
                     Upload maximum of 6 images
                   </FormDescription>
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -172,7 +172,7 @@ const ListingForm = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -197,7 +197,7 @@ const ListingForm = () => {
                     <FormDescription className="text-xs">
                       Rent per month
                     </FormDescription>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -216,7 +216,7 @@ const ListingForm = () => {
                       onSetValue={(value) => field.onChange(value)}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -234,7 +234,7 @@ const ListingForm = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -250,7 +250,7 @@ const ListingForm = () => {
                         onSelect={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -274,7 +274,7 @@ const ListingForm = () => {
                     Enter a short description of your listing. Enter house rules
                     if any.
                   </FormDescription>
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -304,7 +304,7 @@ const ListingForm = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -335,7 +335,7 @@ const ListingForm = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -358,7 +358,7 @@ const ListingForm = () => {
                     <FormDescription className="text-xs">
                       Includes the future tenant of the unit.
                     </FormDescription>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -379,7 +379,7 @@ const ListingForm = () => {
                     <FormDescription className="text-xs">
                       Includes the future tenant of the unit.
                     </FormDescription>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />

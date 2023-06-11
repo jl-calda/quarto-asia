@@ -6,10 +6,21 @@ import { useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
 import { DialogContent } from "@radix-ui/react-dialog"
 import axios from "axios"
-import { formatDistanceToNowStrict, isPast } from "date-fns"
+import { formatDistanceToNowStrict, isPast, set } from "date-fns"
 import getDistance from "geolib/es/getDistance"
 import { GeolibInputCoordinates } from "geolib/es/types"
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -79,6 +90,27 @@ const ListingCard: React.FC<ListingCardProps> = ({
     )
   }, [userLocation, listing.latitude, listing.longitude])
 
+  const handleDelete = () => {
+    setLoading(true)
+    axios
+      .delete(`/api/post/delete/${listing.id}`)
+      .then(() => {
+        toast({
+          title: "Success",
+          description: "Listing deleted",
+        })
+      })
+      .then(() => router.refresh())
+      .catch((error: any) =>
+        toast({
+          title: "Something went wrong",
+          description: error.message,
+          variant: "destructive",
+        })
+      )
+      .finally(() => setLoading(false))
+  }
+
   const handleFavorite = () => {
     setLoading(true)
     axios
@@ -106,7 +138,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   }
 
   return (
-    <Dialog>
+    <AlertDialog>
       <Card className="relative hover:shadow-md w-full h-auto flex flex-col border-none px-1">
         <CardHeader className="flex flex-row items-center gap-x-2 p-2">
           <Avatar
@@ -248,16 +280,29 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </CardFooter>
         )}
         {editable && !forFavorite && (
-          <DialogTrigger>
+          <AlertDialogTrigger>
             <Icons.closeCircle className="absolute top-0 right-0 h-4 w-4" />
-          </DialogTrigger>
+          </AlertDialogTrigger>
         )}
       </Card>
 
-      <DialogContent className="max-w-6xl h-[80%] p-8">
-        <div className="w-full h-full">ada</div>
-      </DialogContent>
-    </Dialog>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction disabled={loading} onClick={handleDelete}>
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
 
