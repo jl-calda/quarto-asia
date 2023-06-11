@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
+import { DialogContent } from "@radix-ui/react-dialog"
 import axios from "axios"
 import { formatDistanceToNowStrict, isPast } from "date-fns"
 import getDistance from "geolib/es/getDistance"
@@ -20,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +36,8 @@ interface ListingCardProps {
   listing: Listing & { user: User }
   currentUser: User | null
   noFooter?: boolean
+  editable?: boolean
+  forFavorite?: boolean
   // userLocation?: GeolibInputCoordinates | null
 }
 
@@ -41,6 +45,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   listing,
   currentUser,
   noFooter,
+  editable,
+  forFavorite,
   // userLocation,
 }) => {
   const isFavorite = currentUser
@@ -100,147 +106,158 @@ const ListingCard: React.FC<ListingCardProps> = ({
   }
 
   return (
-    <Card className="h-auto hover:shadow-md w-full flex flex-col border-none px-1">
-      <CardHeader className="flex flex-row items-center gap-x-2 p-2">
-        <Avatar
-          onClick={() => router.push(`/users/${listing.user.id}`)}
-          className="cursor-pointer"
-        >
-          <AvatarImage src={listing?.user?.image || undefined} />
-          <AvatarFallback>
-            {listing?.user?.name?.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col gap-y-0.5">
-          <CardTitle
-            className="cursor-pointer text-base text-foreground/80"
-            onClick={() => router.push(`/users/${listing.user.id}`)}
+    <Dialog>
+      <Card className="relative hover:shadow-md w-full h-auto flex flex-col border-none px-1">
+        <CardHeader className="flex flex-row items-center gap-x-2 p-2">
+          <Avatar
+            onClick={() => router.push(`/user/${listing.user.id}`)}
+            className="cursor-pointer"
           >
-            {listing.user.name}
-          </CardTitle>
-          <CardDescription className="text-xs">
-            {`${formatDistanceToNowStrict(new Date(listing.createdAt))} ago`}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent className="h-64 sm:h-82 flex flex-col space-y-1 p-2">
-        <div className="relative w-full min-h-[55%] mb-4">
-          <Image
-            onClick={() => router.push(`/listings/${listing.id}`)}
-            className="object-cover object-center rounded-md cursor-pointer"
-            src={listing.images[0]}
-            alt={listing.title}
-            fill
-          />
-        </div>
-        <div className="grid grid-rows-3">
-          <CardDescription
-            onClick={() => router.push(`/listings/${listing.id}`)}
-            className="text-md font-base text-foreground cursor-pointer text-ellipsis row-span-2"
-          >
-            {listing.title}
-          </CardDescription>
-          <CardDescription className="text-base font-bold text-foreground">
-            {`$ ${listing.price}`}
-            <span className="text-xs font-light">/month</span>
-          </CardDescription>
-        </div>
-      </CardContent>
-
-      {!noFooter && (
-        <CardFooter className="flex flex-row gap-y-1 justify-between items-center p-2">
-          <div className="p-0 m-0 flex flex-row gap-x-1 items-center">
-            <Button
-              variant="ghost"
-              className="m-0 p-0 rounded-full w-auto h-auto"
-              onClick={handleFavorite}
+            <AvatarImage src={listing?.user?.image || undefined} />
+            <AvatarFallback>
+              {listing?.user?.name?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col gap-y-0.5">
+            <CardTitle
+              className="cursor-pointer text-base text-foreground/80"
+              onClick={() => router.push(`/users/${listing.user.id}`)}
             >
-              <Icons.heart
-                className="h-4 w-4 cursor-pointer"
-                fill={isFavorite ? "pink" : "none"}
-                stroke={isFavorite ? "pink" : "currentColor"}
-              />
-            </Button>
-            <span>{11}</span>
+              {listing.user.name}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              {`${formatDistanceToNowStrict(new Date(listing.createdAt))} ago`}
+            </CardDescription>
           </div>
-          <div className="flex flex-row items-center gap-x-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge
-                    variant="secondary"
-                    className="flex flex-row gap-x-1 items-center h-6"
-                  >
-                    {!isPast(new Date(listing.availability)) && (
-                      <span className="font-light">{`${
-                        formatDistanceToNowStrict(
-                          new Date(listing.availability)
-                        ).split(" ")[0]
-                      }`}</span>
-                    )}
+        </CardHeader>
+        <CardContent className="h-72 sm:h-82 flex flex-col space-y-1 p-2">
+          <div className="relative w-full h-full mb-4">
+            <Image
+              onClick={() => router.push(`/listings/${listing.id}`)}
+              className="object-cover object-center rounded-md cursor-pointer"
+              src={listing.images[0]}
+              alt={listing.title}
+              fill
+            />
+          </div>
+          <div className="grid grid-rows-3">
+            <CardDescription
+              onClick={() => router.push(`/listings/${listing.id}`)}
+              className="text-md font-base text-foreground cursor-pointer text-ellipsis row-span-2"
+            >
+              {listing.title}
+            </CardDescription>
+            <CardDescription className="text-base font-bold text-foreground">
+              {`$ ${listing.price}`}
+              <span className="text-xs font-light">/month</span>
+            </CardDescription>
+          </div>
+        </CardContent>
 
+        {!noFooter && (
+          <CardFooter className="flex flex-row gap-y-1 justify-between items-center p-2">
+            <div className="p-0 m-0 flex flex-row gap-x-1 items-center">
+              <Button
+                variant="ghost"
+                className="m-0 p-0 rounded-full w-auto h-auto"
+                onClick={handleFavorite}
+              >
+                <Icons.heart
+                  className="h-4 w-4 cursor-pointer"
+                  fill={isFavorite ? "pink" : "none"}
+                  stroke={isFavorite ? "pink" : "currentColor"}
+                />
+              </Button>
+              <span>{11}</span>
+            </div>
+            <div className="flex flex-row items-center gap-x-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge
+                      variant="secondary"
+                      className="flex flex-row gap-x-1 items-center h-6"
+                    >
+                      {!isPast(new Date(listing.availability)) && (
+                        <span className="font-light">{`${
+                          formatDistanceToNowStrict(
+                            new Date(listing.availability)
+                          ).split(" ")[0]
+                        }`}</span>
+                      )}
+
+                      {isPast(new Date(listing.availability)) ? (
+                        <Icons.calendarCheck className="h-3 w-3" />
+                      ) : (
+                        <Icons.calendar className="h-3 w-3" />
+                      )}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
                     {isPast(new Date(listing.availability)) ? (
-                      <Icons.calendarCheck className="h-3 w-3" />
+                      <p>Available now</p>
                     ) : (
-                      <Icons.calendar className="h-3 w-3" />
+                      <p>{`Available in ${formatDistanceToNowStrict(
+                        new Date(listing.availability)
+                      )}`}</p>
                     )}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {isPast(new Date(listing.availability)) ? (
-                    <p>Available now</p>
-                  ) : (
-                    <p>{`Available in ${formatDistanceToNowStrict(
-                      new Date(listing.availability)
-                    )}`}</p>
-                  )}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge
-                    variant="secondary"
-                    className="flex flex-row gap-x-1 items-center h-6"
-                  >
-                    <span className="font-light">{listing.tenants}</span>
-                    <Icons.people className="h-3 w-3" />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{`${listing.tenants} ${
-                    listing.tenants > 1 ? "tenants" : "tenant"
-                  } in the unit.`}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge
-                    variant="secondary"
-                    className="flex flex-row gap-x-2 items-center h-6"
-                  >
-                    {/* <span>{listing.roommates}</span> */}
-                    {listing.roommates > 1 ? (
-                      <Icons.bedDouble className="h-3 w-3" />
-                    ) : (
-                      <Icons.bedSingle className="h-3 w-3" />
-                    )}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{`${
-                    listing.roommates > 1 ? "Sharing room" : "Solo room"
-                  }`}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </CardFooter>
-      )}
-    </Card>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge
+                      variant="secondary"
+                      className="flex flex-row gap-x-1 items-center h-6"
+                    >
+                      <span className="font-light">{listing.tenants}</span>
+                      <Icons.people className="h-3 w-3" />
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{`${listing.tenants} ${
+                      listing.tenants > 1 ? "tenants" : "tenant"
+                    } in the unit.`}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge
+                      variant="secondary"
+                      className="flex flex-row gap-x-2 items-center h-6"
+                    >
+                      {/* <span>{listing.roommates}</span> */}
+                      {listing.roommates > 1 ? (
+                        <Icons.bedDouble className="h-3 w-3" />
+                      ) : (
+                        <Icons.bedSingle className="h-3 w-3" />
+                      )}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{`${
+                      listing.roommates > 1 ? "Sharing room" : "Solo room"
+                    }`}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </CardFooter>
+        )}
+        {editable && !forFavorite && (
+          <DialogTrigger>
+            <Icons.closeCircle className="absolute top-0 right-0 h-4 w-4" />
+          </DialogTrigger>
+        )}
+      </Card>
+
+      <DialogContent className="max-w-6xl h-[80%] p-8">
+        <div className="w-full h-full">ada</div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

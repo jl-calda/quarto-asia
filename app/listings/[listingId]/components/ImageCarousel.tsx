@@ -140,7 +140,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                 width={40}
                 height={40}
                 className={`cursor-pointer object-cover object-center ease-linear transition-all duration-150 ${
-                  i === activeIndex ? "opacity-100" : "opacity-50"
+                  i === activeIndex ? "opacity-50" : "opacity-100"
                 }`}
                 alt="Listing image"
               />

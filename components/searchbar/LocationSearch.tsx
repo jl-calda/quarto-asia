@@ -12,7 +12,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command"
 
-const LocationSearch = () => {
+// const LocationSearch = () => {
   return (
     <Command className="w-1/4 hidden sm:block">
       <CommandInput placeholder="Type a command or search..." />

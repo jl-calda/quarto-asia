@@ -2,8 +2,9 @@
 
 import { get } from "http"
 import React, { useEffect, useMemo, useState } from "react"
+import dynamic from "next/dynamic"
 import { Listing, User } from "@prisma/client"
-import { formatDistance } from "date-fns"
+import { formatDistance, formatDistanceToNowStrict, isPast } from "date-fns"
 import { getCenter, getDistance } from "geolib"
 import { GeolibInputCoordinates, UserInputCoordinates } from "geolib/es/types"
 
@@ -54,6 +55,14 @@ const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ")
 
+  const Map = useMemo(
+    () =>
+      dynamic(() => import("./Map"), {
+        ssr: false,
+      }),
+    [userLocation, listingLocation]
+  )
+
   return (
     <div className="border-none mb-6">
       <div className="h-[52vh] w-full mb-6">
@@ -84,7 +93,11 @@ const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
             <h3 className="text-xl font-semibold">Posted by</h3>
             <Separator className="w-auto flex-1 mx-4" />
           </div>
-          <AvatarBox user={listing.user} currentUser={currentUser} />
+          <AvatarBox
+            user={listing.user}
+            currentUser={currentUser}
+            listingId={listing.id}
+          />
         </div>
       </div>
       <div className="flex flex-col sm:grid gap-y-4 sm:grid-rows-1 sm:grid-cols-2 gap-x-10 sm:min-h-[35vh]">
@@ -144,6 +157,25 @@ const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
               <p>Sharing room</p>
             ) : (
               <p>Solo room</p>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            {isPast(new Date(listing.availability)) ? (
+              <Icons.calendarCheck className="w-4 h-4 mr-2" />
+            ) : (
+              <Icons.calendar className="w-4 h-4 mr-2" />
+            )}
+            {isPast(new Date(listing.availability)) ? (
+              <p>Available Now</p>
+            ) : (
+              <p>
+                Available in
+                <span>
+                  {` ${formatDistanceToNowStrict(
+                    new Date(listing.availability)
+                  )}`}
+                </span>
+              </p>
             )}
           </div>
         </div>

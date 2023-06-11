@@ -1,4 +1,5 @@
 import React from "react"
+import { User } from "@prisma/client"
 
 import { navbarConfig } from "@/config/navbar"
 
@@ -6,9 +7,11 @@ import Categories from "./Categories"
 import Logo from "./Logo"
 import Usermenu from "./Usermenu"
 
-type Props = {}
+interface NavbarProps {
+  currentUser: User | null
+}
 
-const Navbar = (props: Props) => {
+const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0 px-2 sm:px-8">
@@ -17,7 +20,7 @@ const Navbar = (props: Props) => {
           <Categories houses={navbarConfig.houses} rooms={navbarConfig.rooms} />
         </div>
         <div className="flex-1 flex justify-end items-center">
-          <Usermenu />
+          <Usermenu currentUser={currentUser} />
         </div>
       </div>
     </header>

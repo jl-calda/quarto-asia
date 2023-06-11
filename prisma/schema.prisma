@@ -21,6 +21,8 @@ model User {
   updatedAt      DateTime  @updatedAt
   favoriteIds      String[] @db.String
 
+
+
   accounts Account[]
   listings Listing[]
 }
@@ -43,31 +45,6 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
-
-// images: z.array(z.string()),
-//   title: z
-//     .string()
-//     .min(10, {
-//       message: "Title must be at least 10 characters.",
-//     })
-//     .max(60, {
-//       message: "Title must not be longer than 30 characters.",
-//     }),
-//   price: z.coerce.number().min(0),
-//   location: z.string(),
-//   unit: z.string().optional(),
-//   availability: z.date(),
-//   description: z.string().max(160).min(4),
-//   house: z.string(),
-//   room: z.string(),
-//   tenants: z.coerce
-//     .number()
-//     .min(1)
-//     .max(6, { message: "Maximum allowed as HDB is 6 registered tenants" }),
-//   roommates: z.coerce
-//     .number()
-//     .min(1)
-//     .max(6, { 
 
 model Listing {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId

@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { User } from "@prisma/client"
 import clsx from "clsx"
 import { signOut, useSession } from "next-auth/react"
 
@@ -23,14 +24,18 @@ import { useToast } from "../ui/use-toast"
 import LoginDialog from "./dialogs/LoginContent"
 import RegisterDialog from "./dialogs/RegisterContent"
 
-const Usermenu = () => {
+interface UsermenuProps {
+  currentUser: User | null
+}
+
+const Usermenu: React.FC<UsermenuProps> = ({ currentUser }) => {
   const { toast } = useToast()
   const router = useRouter()
-  const session = useSession()
+  const pathName = usePathname()
   const [active, setActive] = useState("")
 
   const handlePost = () => {
-    if (session.status === "authenticated") {
+    if (currentUser) {
       return router.push("/post")
     } else {
       toast({
@@ -44,17 +49,19 @@ const Usermenu = () => {
   return (
     <Dialog>
       <div className="flex flex-row item sm:gap-x-2">
-        {session.status === "authenticated" ? (
+        {currentUser ? (
           <div className="flex flex-row sm:space-x-2 items-center">
             <DropdownMenu>
               <DropdownMenuTrigger className="flex flex-row space-x-2 items-center rounded-md hover:bg-accent hover:text-accent-foreground">
                 <Avatar>
-                  <AvatarImage src={session?.data?.user?.image || undefined} />
-                  <AvatarFallback>{"A"}</AvatarFallback>
+                  <AvatarImage src={currentUser.image || undefined} />
+                  <AvatarFallback>
+                    {currentUser.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
 
                 <span className="text-sm">{`Hello, ${
-                  session?.data?.user?.name?.split(" ")[0]
+                  currentUser?.name?.split(" ")[0]
                 }`}</span>
                 <Icons.chevron className="h-4 w-4" />
               </DropdownMenuTrigger>
@@ -64,22 +71,29 @@ const Usermenu = () => {
                   <span>Profile</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DialogTrigger asChild>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Icons.user className="mr-4 h-4 w-4" />
-                    <span>Account</span>
-                  </DropdownMenuItem>
-                </DialogTrigger>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/user/${currentUser.id}`)}
+                >
+                  <Icons.user className="mr-4 h-4 w-4" />
+                  <span>Account</span>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push(`/user/${currentUser.id}/favorites`)
+                  }
+                >
                   <Icons.heart className="mr-4 h-4 w-4" />
                   <span>Favorites</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Icons.calendar className="mr-4 h-4 w-4" />
-                  <span>Viewings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push(`/user/${currentUser.id}/listings`)
+                  }
+                >
                   <Icons.bed className="mr-4 h-4 w-4" />
                   <span>Listings</span>
                 </DropdownMenuItem>
@@ -106,10 +120,18 @@ const Usermenu = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" className="px-2 py-2 m-0">
+            <Button
+              onClick={() => router.push(`/user/${currentUser.id}/chat`)}
+              variant="ghost"
+              className="px-2 py-2 m-0"
+            >
               <Icons.chat className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" className="px-2 py-2 m-0">
+            <Button
+              variant="ghost"
+              className="px-2 py-2 m-0"
+              onClick={() => router.push(`/user/${currentUser.id}/favorites`)}
+            >
               <Icons.heart className="h-5 w-5" />
             </Button>
           </div>

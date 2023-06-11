@@ -14,12 +14,17 @@ import getCurrentUser from "@/app/actions/getCurrentUser"
 interface AvatarBoxProps {
   user: User
   currentUser: User | null
+  listingId?: string
 }
 
-const AvatarBox: React.FC<AvatarBoxProps> = ({ user, currentUser }) => {
-  const session = useSession()
+const AvatarBox: React.FC<AvatarBoxProps> = ({
+  user,
+  currentUser,
+  listingId,
+}) => {
   const router = useRouter()
-  console.log(session)
+  const isCurrentUser = currentUser?.id === user?.id
+
   return (
     <Card className="flex flex-col gap-y-2 p-2 w-full h-full">
       <div className="flex flex-row gap-x-2 items-center flex-1 cursor-pointer">
@@ -44,11 +49,17 @@ const AvatarBox: React.FC<AvatarBoxProps> = ({ user, currentUser }) => {
         </div>
       </div>
       <Button
-        onClick={() => router.push(`user/${currentUser?.id}/chat/${user?.id}`)}
+        onClick={() => {
+          if (isCurrentUser) {
+            router.push(`/user/${user.id}/listings/${listingId}`)
+          } else {
+            router.push(`/user/${currentUser?.id}/chat/${user.id}`)
+          }
+        }}
         variant="default"
         className="block justify-self-end"
       >
-        Chat
+        {isCurrentUser ? "Edit Post" : "Message"}
       </Button>
     </Card>
   )
