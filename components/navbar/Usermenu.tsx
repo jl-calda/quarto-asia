@@ -31,7 +31,7 @@ interface UsermenuProps {
 const Usermenu: React.FC<UsermenuProps> = ({ currentUser }) => {
   const { toast } = useToast()
   const router = useRouter()
-  const pathName = usePathname()
+
   const [active, setActive] = useState("")
 
   const handlePost = () => {
