@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   DollarSign,
+  Edit,
   Heart,
   Home,
   ImagePlus,
@@ -68,4 +69,5 @@ export const Icons = {
   chevronLeft: ChevronLeft,
   mapPin: MapPin,
   ruler: Ruler,
+  edit: Edit,
 }

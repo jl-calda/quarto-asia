@@ -5,39 +5,30 @@ import React, { use, useEffect, useMemo, useState } from "react"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import { User } from "@prisma/client"
 import axios from "axios"
+import clsx from "clsx"
+import { ca } from "date-fns/locale"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import getUserById from "@/app/actions/getUserById"
+import useRoutes from "@/app/hooks/useRoutes"
 
 interface UserBannerProps {
   currentUser: User | null
 }
 
 const UserBanner: React.FC<UserBannerProps> = ({ currentUser }) => {
+  const routes = useRoutes(currentUser || null)
   const params = useParams()
-  const pathName = usePathname()
   const { userId } = params
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    axios.get(`/api/user/${userId}`).then((res) => setUser(res.data))
+    try {
+      axios.get(`/api/user/${userId}`).then((res) => setUser(res.data))
+    } catch (err) {
+      return
+    }
   }, [userId])
-
-  const activePath = useMemo(() => {
-    let active = ""
-    const splitPath = pathName.split("/")
-    if (splitPath.includes("listings")) return "Listings"
-    if (splitPath.includes("favorites")) return "Favorites"
-    if (splitPath.includes("edit")) return "Edit Profile"
-    return "All"
-  }, [pathName])
-
-  console.log(activePath)
-  const [active, setActive] = useState("All")
-
-  const router = useRouter()
-
-  const routes = ["All", "Favorites", "Listings", "Edit Profile"]
 
   const initials = user?.name
     ?.split(" ")
@@ -45,7 +36,7 @@ const UserBanner: React.FC<UserBannerProps> = ({ currentUser }) => {
     .join("")
 
   return (
-    <div className="w-full relative sm:h-36 h-24 bg-green-800 rounded-md grid grid-cols-4 sm:grid-cols-5 place-content-end px-4">
+    <div className="w-full relative sm:h-36 h-24 bg-green-800">
       <div className="hidden sm:block absolute sm:top-[77px] left-10 p-1 bg-white rounded-full">
         <Avatar className="w-24 h-24 sm:h-36 sm:w-36 rounded-full">
           <AvatarImage src={user?.image || undefined} />
@@ -54,14 +45,32 @@ const UserBanner: React.FC<UserBannerProps> = ({ currentUser }) => {
           </AvatarFallback>
         </Avatar>
       </div>
-
-      <div className="col-span-4 sm:col-start-3 sm:col-span-3 place-content-end pb-4">
-        <div className="grid grid-cols-4 place-items-center">
-          {routes.map((route) => (
-            <div key={crypto.randomUUID()} className="text-white">
-              {route}
-            </div>
-          ))}
+      <div className="flex flex-row gap-x-6 absolute bottom-0 w-full">
+        <div className="hidden sm:block sm:w-64" />
+        <div className="flex-1 col-span-4 sm:col-start-2 sm:col-span-4 place-content-end">
+          <nav className="grid grid-cols-5 place-items-center">
+            {routes?.map((route) => {
+              if (
+                !route.isProtected ||
+                (route.isProtected && currentUser && currentUser?.id === userId)
+              )
+                return (
+                  <div
+                    onClick={route.onClick}
+                    key={crypto.randomUUID()}
+                    className={clsx(
+                      "w-full py-2 rounded-tr-md rounded-tl-md",
+                      route.isActive ? "bg-white" : "text-foreground",
+                      route.isActive ? "font-semibold" : "font-medium",
+                      route.isActive ? "text-foreground" : "text-white",
+                      "text-center text-sm cursor-pointer hover:opacity-95"
+                    )}
+                  >
+                    {route.label}
+                  </div>
+                )
+            })}
+          </nav>
         </div>
       </div>
     </div>

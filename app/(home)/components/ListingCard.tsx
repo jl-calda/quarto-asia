@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
 import { DialogContent } from "@radix-ui/react-dialog"
 import axios from "axios"
@@ -64,6 +64,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
     ? listing?.user?.favoriteIds?.includes(currentUser?.id)
     : false
   const router = useRouter()
+  const params = useParams()
+  const { userId } = params
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [userLocation, setUserLocation] =
@@ -279,19 +281,48 @@ const ListingCard: React.FC<ListingCardProps> = ({
             </div>
           </CardFooter>
         )}
-        {editable && !forFavorite && (
-          <AlertDialogTrigger>
-            <Icons.closeCircle className="absolute top-0 right-0 h-4 w-4" />
-          </AlertDialogTrigger>
+        {editable && !forFavorite && currentUser?.id === userId && (
+          <div className="absolute top-0 right-0 p-2 flex flex-row items-start gap-x-2">
+            <AlertDialogTrigger className="h-auto">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icons.closeCircle className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </AlertDialogTrigger>
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icons.edit
+                      onClick={() =>
+                        router.push(
+                          `user/${currentUser.id}/listings/${listing.id}`
+                        )
+                      }
+                      className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Edit</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
         )}
       </Card>
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Confirm deletion?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

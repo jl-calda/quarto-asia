@@ -31,7 +31,7 @@ const UserPage = async ({ params }: { params: UserPageParams }) => {
         <h3 className="text-xl font-semibold">Listings</h3>
         <Separator className="w-auto flex-1 mx-4" />
       </div>
-      <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
         {listingsByUser?.map((listing) => (
           <ListingCard
             key={crypto.randomUUID()}
@@ -49,7 +49,7 @@ const UserPage = async ({ params }: { params: UserPageParams }) => {
             <h3 className="text-xl font-semibold">Favorites</h3>
             <Separator className="w-auto flex-1 mx-4" />
           </div>
-          <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
             {favoritesByUser?.map((listing) => (
               <ListingCard
                 key={crypto.randomUUID()}

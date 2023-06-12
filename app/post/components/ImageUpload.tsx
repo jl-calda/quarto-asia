@@ -1,5 +1,6 @@
 "use client"
 
+import { error } from "console"
 import { on } from "events"
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
@@ -19,13 +20,15 @@ interface ImageCarouselProps {
 const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
   const [loading, setLoading] = useState(false)
   const [dialogImage, setDialogImage] = useState("")
+  const [display, setDisplay] = useState(images)
 
   const handleUpload = useCallback(
-    async (result: any) => {
-      setLoading(true)
-      const updateImages = async () =>
-        onChange([...images, await result.info.secure_url])
-      await updateImages().then(() => setLoading(false))
+    async (error: any, result: any) => {
+      if (error) return
+      if (result.event === "success") {
+        onChange([...images, result.info.secure_url])
+        setDisplay([...images, result.info.secure_url])
+      }
     },
     [onChange, images]
   )
@@ -44,7 +47,7 @@ const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
     <Dialog>
       <div className="grid grid-cols-2 grid-rows-3 sm:grid-cols-1 md:grid-cols-2 md:grid-rows-3 sm:grid-rows-6 gap-x-2 gap-y-2 h-full w-full">
         {!loading &&
-          images.map((image) => (
+          display.map((image) => (
             <div
               key={crypto.randomUUID()}
               className="relative w-full flex-1 h-full flex flex-col"
@@ -70,11 +73,9 @@ const ImageGrid: React.FC<ImageCarouselProps> = ({ images, onChange }) => {
         {dummyPhotoArr.map((item) => (
           <CldUploadWidget
             key={crypto.randomUUID()}
-            onOpen={() => setLoading(true)}
             onUpload={handleUpload}
             options={{ maxFiles: images.length }}
             uploadPreset="quarto-preset"
-            onClose={() => setLoading(false)}
           >
             {({ open }) => {
               return (
@@ -123,10 +124,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
 
   const [loading, setLoading] = useState(false)
   const handleUpload = useCallback(
-    async (result: any) => {
-      const updateImages = async () =>
-        onChange([...value, await result.info.secure_url])
-      await updateImages()
+    async (error: any, result: any) => {
+      if (error) return
+      if (result.event === "success") {
+        onChange([...value, result.info.secure_url])
+      }
     },
     [onChange, value]
   )

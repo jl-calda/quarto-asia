@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { useParams, usePathname } from "next/navigation"
+import { useParams, usePathname, useRouter } from "next/navigation"
 import { User } from "@prisma/client"
 import { AvatarFallback } from "@radix-ui/react-avatar"
 import axios from "axios"
@@ -29,6 +29,7 @@ const UserColumn: React.FC<UserColumnProps> = ({ currentUser }) => {
   const pathName = usePathname()
   const { userId } = params
   const [user, setUser] = useState<User | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     axios.get(`/api/user/${userId}`).then((res) => setUser(res.data))
@@ -69,7 +70,13 @@ const UserColumn: React.FC<UserColumnProps> = ({ currentUser }) => {
         <>
           <Separator />
           <CardFooter className="pt-6">
-            <Button className="w-full" variant="default">
+            <Button
+              onClick={() =>
+                router.push(`/user/${currentUser?.id}/chats/${userId}`)
+              }
+              className="w-full"
+              variant="default"
+            >
               Chat
             </Button>
           </CardFooter>

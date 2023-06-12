@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Listing, User } from "@prisma/client"
 import axios from "axios"
 import { set } from "date-fns"
 import { useForm } from "react-hook-form"
@@ -31,10 +32,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/react-hook-form/form"
-
-import DatePick from "./DatePick"
-import ImageUpload from "./ImageUpload"
-import LocationSearch from "./LocationSearch"
+import getListingById from "@/app/actions/getListingById"
+import DatePick from "@/app/post/components/DatePick"
+import ImageUpload from "@/app/post/components/ImageUpload"
+import LocationSearch from "@/app/post/components/LocationSearch"
 
 const listingFormSchema = z.object({
   images: z.array(z.string()),
@@ -84,7 +85,14 @@ const defaultValues: Partial<ProfileFormValues> = {
   roommates: 1,
 }
 
-const ListingForm = () => {
+interface EditListingFormProps {
+  currentListing: (Listing & { user: User }) | null | undefined
+}
+const EditListingForm: React.FC<EditListingFormProps> = ({
+  currentListing,
+}) => {
+  const params = useParams()
+  const { listingId } = params
   const { setValue, watch } = useForm()
   const latitude = watch("latitude")
   const longitude = watch("longitude")
@@ -93,7 +101,7 @@ const ListingForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(listingFormSchema),
-    defaultValues: { ...defaultValues },
+    defaultValues: { ...currentListing },
     mode: "onChange",
   })
   const onSubmit = (data: ProfileFormValues) => {
@@ -104,12 +112,12 @@ const ListingForm = () => {
     }
     setIsLoading(true)
     axios
-      .post("/api/post", updatedData)
+      .post(`/api/post/edit/${listingId}`, updatedData)
       .then((data: any) => {
         toast({
           variant: "default",
           title: "Success!",
-          description: "Your listing has been created",
+          description: "Your listing has been updated.",
           action: (
             <ToastAction
               onClick={() => router.push(`/listings/${data.data.id}`)}
@@ -135,18 +143,18 @@ const ListingForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
-          <div className="w-full sm:h-full h-[60vh] mb-4">
+        <div className="grid grid-cols-1 gap-x-6">
+          <div className="w-full sm:h-full mb-4">
             <FormField
               control={form.control}
               name="images"
               render={({ field }) => (
-                <FormItem className="h-full flex-1 flex flex-col">
+                <FormItem className="sm:h-[90vh] md:h-[60vh] flex-1 flex flex-col">
                   <FormLabel>Upload Images</FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(value) => field.onChange(value)}
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
@@ -385,7 +393,7 @@ const ListingForm = () => {
               />
             </div>
             <Button disabled={isLoading} className="w-full mt-4" type="submit">
-              Submit
+              Update
             </Button>
           </div>
         </div>
@@ -394,4 +402,4 @@ const ListingForm = () => {
   )
 }
 
-export default ListingForm
+export default EditListingForm

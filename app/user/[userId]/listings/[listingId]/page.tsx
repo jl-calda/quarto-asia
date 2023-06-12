@@ -1,9 +1,23 @@
 import React from "react"
 
-type Props = {}
+import getListingById from "@/app/actions/getListingById"
 
-const ListingPage = (props: Props) => {
-  return <div>ListingPage</div>
+import EditListingForm from "./components/EditListingForm"
+
+interface ListingPageParams {
+  listingId: string
+  userId: string
+}
+
+const ListingPage = async ({ params }: { params: ListingPageParams }) => {
+  const { listingId, userId } = params
+  const currentListing = await getListingById(listingId)
+
+  return (
+    <div className="pt-8">
+      <EditListingForm currentListing={currentListing} />
+    </div>
+  )
 }
 
 export default ListingPage
