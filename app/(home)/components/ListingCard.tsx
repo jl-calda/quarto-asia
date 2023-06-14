@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
@@ -68,6 +68,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const { userId } = params
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const divRef = useRef<HTMLDivElement>(null)
   const [userLocation, setUserLocation] =
     useState<GeolibInputCoordinates | null>(null)
 
@@ -283,18 +284,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
         )}
         {editable && !forFavorite && currentUser?.id === userId && (
           <div className="absolute top-0 right-0 p-2 flex flex-row items-start gap-x-2">
-            <AlertDialogTrigger className="h-auto">
-              <TooltipProvider>
-                <Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <div className="relative">
                   <TooltipTrigger>
-                    <Icons.closeCircle className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
+                    <Icons.closeCircle className="absolute top-0 -left-4 h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Delete</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </AlertDialogTrigger>
+                  <AlertDialogTrigger className="h-auto">
+                    <Icons.closeCircle className="absolute top-0 -left-4 h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
+                  </AlertDialogTrigger>
+                </div>
+                <TooltipContent>
+                  <p>Delete</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div>
               <TooltipProvider>
                 <Tooltip>

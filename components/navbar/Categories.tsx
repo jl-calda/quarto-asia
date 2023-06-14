@@ -77,7 +77,6 @@ const Categories: React.FC<CategoriesProps> = ({ houses, rooms }) => {
   const [houseParam, setHouseParam] = useState<string>("")
   const [roomParam, setRoomParam] = useState<string>("")
   const params = useParams()
-  console.log(params)
   const pathName = usePathname()
 
   return (
