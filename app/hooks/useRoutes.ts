@@ -17,7 +17,7 @@ const useRoutes = (currentUser: User | null) => {
     const pathArr = pathName.split("/")
     if (pathArr.includes("favorites")) return "Favorites"
     if (pathArr.includes("chats")) return "Chat"
-    if (pathArr.includes("edit")) return "Edit Profile"
+    if (pathArr.includes("edit")) return "Profile"
     if (pathArr.includes("listings")) return "Listings"
     return "Home"
   }, [pathName])
@@ -69,8 +69,8 @@ const useRoutes = (currentUser: User | null) => {
         isProtected: true,
       },
       {
-        label: "Edit Profile",
-        isActive: isActive === "Edit Profile",
+        label: "Profile",
+        isActive: isActive === "Profile",
         onClick: () => {
           if (currentUser) {
             router.push(`/user/${currentUser.id}/edit`)

@@ -13,15 +13,16 @@ datasource db {
 model User {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
+  description    String?
   email          String?   @unique
   emailVerified  DateTime?
+  contactNo      String?
+  contactNoVerified DateTime?
   image          String?
   hashedPassword String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   favoriteIds      String[] @db.String
-
-
 
   accounts Account[]
   listings Listing[]

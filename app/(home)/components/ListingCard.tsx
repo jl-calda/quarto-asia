@@ -68,7 +68,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const { userId } = params
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
-  const divRef = useRef<HTMLDivElement>(null)
   const [userLocation, setUserLocation] =
     useState<GeolibInputCoordinates | null>(null)
 
@@ -283,41 +282,39 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </CardFooter>
         )}
         {editable && !forFavorite && currentUser?.id === userId && (
-          <div className="absolute top-0 right-0 p-2 flex flex-row items-start gap-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <div className="relative">
-                  <TooltipTrigger>
-                    <Icons.closeCircle className="absolute top-0 -left-4 h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
-                  </TooltipTrigger>
-                  <AlertDialogTrigger className="h-auto">
-                    <Icons.closeCircle className="absolute top-0 -left-4 h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
-                  </AlertDialogTrigger>
-                </div>
-                <TooltipContent>
-                  <p>Delete</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <div>
+          <div className="absolute top-0 right-0 p-2 flex flex-row items-center gap-x-2">
+            <AlertDialogTrigger>
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
-                    <Icons.edit
-                      onClick={() =>
-                        router.push(
-                          `user/${currentUser.id}/listings/${listing.id}`
-                        )
-                      }
-                      className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground"
-                    />
+                  <TooltipTrigger asChild>
+                    <Icons.closeCircle className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground" />
                   </TooltipTrigger>
+
                   <TooltipContent>
-                    <p>Edit</p>
+                    <p className="">Delete</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </div>
+            </AlertDialogTrigger>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Icons.edit
+                    onClick={() =>
+                      router.push(
+                        `user/${currentUser.id}/listings/${listing.id}`
+                      )
+                    }
+                    className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground"
+                  />
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Edit Post</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
       </Card>

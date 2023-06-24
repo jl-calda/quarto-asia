@@ -24,7 +24,7 @@ const UserLayout = async ({ params, children }: UserLayoutProps) => {
       <UserBanner currentUser={currentUser} />
 
       <div className="flex flex-col sm:flex-row gap-x-6 gap-y-2">
-        <div className="w-64">
+        <div className="w-full sm:w-64">
           <UserColumn currentUser={currentUser} />
         </div>
         <div className="flex-1">{children}</div>

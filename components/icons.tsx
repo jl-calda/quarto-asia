@@ -16,8 +16,10 @@ import {
   ImagePlus,
   LogOut,
   LucideProps,
+  MailQuestion,
   MapPin,
   MessageSquare,
+  PhoneMissed,
   Ruler,
   User,
   Users,
@@ -70,4 +72,6 @@ export const Icons = {
   mapPin: MapPin,
   ruler: Ruler,
   edit: Edit,
+  mailQuestion: MailQuestion,
+  phoneMissed: PhoneMissed,
 }
