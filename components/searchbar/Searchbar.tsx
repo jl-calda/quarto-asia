@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 
 import ListingSearch from "./ListingSearch"
-import LocationSearch from "./LocationSearch"
 
 type Props = {}
 

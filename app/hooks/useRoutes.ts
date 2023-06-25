@@ -80,7 +80,7 @@ const useRoutes = (currentUser: User | null) => {
         isProtected: true,
       },
     ],
-    [pathName, currentUser, userId]
+    [pathName, currentUser, userId, isActive, router]
   )
   return routes
 }

@@ -48,7 +48,7 @@ const ListingView: React.FC<ListingViewProps> = ({ listing, currentUser }) => {
   const distance = useMemo(() => {
     if (!userLocation) return null
     return getDistance(userLocation, listingLocation) / 1000
-  }, [userLocation, listingLocation])
+  }, [])
 
   const transformedLocation = listing.location
     ?.split(" ")

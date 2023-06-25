@@ -8,7 +8,6 @@ import { Dialog } from "@/components/ui/dialog"
 import { Toaster } from "@/components/Toaster"
 import Navbar from "@/components/navbar/Navbar"
 import Searchbar from "@/components/searchbar/Searchbar"
-import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
