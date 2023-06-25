@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { Listing, User } from "@prisma/client"
-import { DialogContent } from "@radix-ui/react-dialog"
 import axios from "axios"
 import { formatDistanceToNowStrict, isPast, set } from "date-fns"
 import getDistance from "geolib/es/getDistance"
@@ -32,7 +31,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import {
   Tooltip,
   TooltipContent,
