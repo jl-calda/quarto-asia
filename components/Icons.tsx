@@ -11,6 +11,9 @@ import {
   ChevronsLeft,
   DollarSign,
   Edit,
+  Eye,
+  EyeOff,
+  Github,
   Heart,
   Home,
   ImagePlus,
@@ -26,6 +29,7 @@ import {
   XCircle,
   type Icon as LucideIcon,
 } from "lucide-react"
+import { FaGit, FaGithub, FaGoogle } from "react-icons/fa"
 
 export type Icon = LucideIcon
 
@@ -74,4 +78,8 @@ export const Icons = {
   edit: Edit,
   mailQuestion: MailQuestion,
   phoneMissed: PhoneMissed,
+  github: FaGithub,
+  google: FaGoogle,
+  eye: Eye,
+  eyeOff: EyeOff,
 }
