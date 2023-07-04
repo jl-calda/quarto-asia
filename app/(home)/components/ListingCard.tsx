@@ -41,6 +41,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/Icons"
 import getLocation from "@/app/actions/getLocation"
 
+import FavoriteHeart from "./FavoriteHeart"
+
 interface ListingCardProps {
   listing: Listing & { user: User }
   currentUser: User | null
@@ -188,20 +190,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
         {!noFooter && (
           <CardFooter className="flex flex-row gap-y-1 justify-between items-center p-2">
-            <div className="p-0 m-0 flex flex-row gap-x-1 items-center">
-              <Button
-                variant="ghost"
-                className="m-0 p-0 rounded-full w-auto h-auto"
-                onClick={handleFavorite}
-              >
-                <Icons.heart
-                  className="h-4 w-4 cursor-pointer"
-                  fill={isFavorite ? "pink" : "none"}
-                  stroke={isFavorite ? "pink" : "currentColor"}
-                />
-              </Button>
-              <span>{11}</span>
-            </div>
+            <FavoriteHeart currentUser={currentUser} listing={listing} />
             <div className="flex flex-row items-center gap-x-1">
               <TooltipProvider>
                 <Tooltip>
@@ -304,7 +293,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                         `user/${currentUser.id}/listings/${listing.id}`
                       )
                     }
-                    className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground"
+                    className="h-4 w-4 hover:scale-95 transition duration-150 hover:text-muted-foreground cursor-pointer"
                   />
                 </TooltipTrigger>
 
