@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { useParams, usePathname, useRouter } from "next/navigation"
-import { User } from "@prisma/client"
+import { Listing, User } from "@prisma/client"
 import { AvatarFallback } from "@radix-ui/react-avatar"
 import axios from "axios"
 import { formatDistanceToNowStrict } from "date-fns"
@@ -22,9 +22,10 @@ import { Icons } from "@/components/Icons"
 
 interface UserColumnProps {
   currentUser: User | null
+  listings: Listing[] | any
 }
 
-const UserColumn: React.FC<UserColumnProps> = ({ currentUser }) => {
+const UserColumn: React.FC<UserColumnProps> = ({ currentUser, listings }) => {
   const params = useParams()
   const pathName = usePathname()
   const { userId } = params
@@ -55,15 +56,36 @@ const UserColumn: React.FC<UserColumnProps> = ({ currentUser }) => {
         </div>
         <div className="flex flex-col gap-y-2">
           <CardTitle className="text-xl sm:text-3xl">{user.name}</CardTitle>
-          <CardDescription className="flex flex-row items-center">
-            <Icons.calendar className="mr-2 text-xs" />
-            {`Joined ${formatDistanceToNowStrict(new Date(user?.createdAt))}`}
-          </CardDescription>
+          <CardDescription>{user.description}</CardDescription>
         </div>
       </CardHeader>
       <Separator />
-      <CardContent className="">
-        <div className="flex flex-col"></div>
+      <CardContent className="py-4">
+        <div className="flex flex-col gap-y-2">
+          <CardDescription className="flex flex-row items-center">
+            <Icons.mail className="mr-6 text-xs h-5 w-5" />
+            {`${user?.email}`}
+          </CardDescription>
+          <CardDescription className="flex flex-row items-center">
+            <Icons.phone className="mr-6 text-xs h-5 w-5" />
+            {`${user?.contactNo}`}
+          </CardDescription>
+          <CardDescription className="flex flex-row items-center">
+            <Icons.calendar className="mr-6 text-xs h-5 w-5" />
+            {`Joined ${formatDistanceToNowStrict(new Date(user?.createdAt))}`}
+          </CardDescription>
+        </div>
+      </CardContent>
+      <Separator />
+      <CardContent className="py-4">
+        <div className="flex flex-col gap-y-2">
+          <CardDescription className="flex flex-row items-center">
+            <Icons.bed className="mr-6 text-xs h-5 w-5" />
+            {`${listings.length} ${
+              listings.length === 1 ? "Listing" : "Listings"
+            }`}
+          </CardDescription>
+        </div>
       </CardContent>
 
       {currentUser?.id !== user.id && (

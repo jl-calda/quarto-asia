@@ -19,9 +19,11 @@ import {
   ImagePlus,
   LogOut,
   LucideProps,
+  Mail,
   MailQuestion,
   MapPin,
   MessageSquare,
+  Phone,
   PhoneMissed,
   Ruler,
   User,
@@ -82,4 +84,6 @@ export const Icons = {
   google: FaGoogle,
   eye: Eye,
   eyeOff: EyeOff,
+  phone: Phone,
+  mail: Mail,
 }

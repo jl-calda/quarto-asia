@@ -62,6 +62,7 @@ model Listing {
   room         String
   tenants      Int
   roommates    Int
+  favoriteUserIds String[] @db.String
 
   userId       String   @db.ObjectId
   createdAt    DateTime @default(now())

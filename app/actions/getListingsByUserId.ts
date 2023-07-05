@@ -11,15 +11,6 @@ export default async function getListingByUserId(userId: string) {
       },
     })
 
-    // const listing = await prisma.user.findUnique({
-    //   where: {
-    //     id: userId,
-    //   },
-    //   include: {
-    //     listings: true,
-    //   },
-    // })
-
     return listing
   } catch (error) {
     console.log(error)
