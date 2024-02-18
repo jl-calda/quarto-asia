@@ -4,9 +4,6 @@ const nextConfig = {
   images: {
     domains: ["res.cloudinary.com", "developers.onemap.sg"],
   },
-  experimental: {
-    appDir: true,
-  },
 }
 
 export default nextConfig

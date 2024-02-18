@@ -66,7 +66,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     const getLocation = async () => {
       if (!inputValue) return
       const data = await fetch(
-        `https://developers.onemap.sg/commonapi/search?searchVal=${inputValue}&returnGeom=Y&getAddrDetails=Y&pageNum=1`
+        `https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${inputValue}&returnGeom=Y&getAddrDetails=Y&pageNum=1`
       )
         .then((res) => res.json())
         .then((data) => data.results)
