@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Next.js",
+  name: "quarto-asia",
   description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+    "Property rental website in Singapore. Post your rooms for rent, HDB for rent, condo for rent, landed property for rent, and commercial property for rent.",
   mainNav: [
     {
       title: "Home",
