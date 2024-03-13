@@ -40,7 +40,37 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <head />
+        <head>
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon/favicon-16x16.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x52"
+            href="/favicon/favicon-32x32"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="192x192"
+            href="/favicon/android-chrome-192x192.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="512x512"
+            href="/favicon/android-chrome-512x512.png"
+          />
+          <link
+            rel="apple-touch-icon"
+            sizes="192x192"
+            href="/favicon/apple-touch-icon.png"
+          />
+        </head>
         <body
           className={cn(
             "min-h-screen bg-background font-sans antialiased",
@@ -49,7 +79,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         >
           <AuthContext>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <div className="relative flex min-h-screen flex-col">
+              <div className="relative flex flex-col min-h-screen">
                 <Dialog>
                   <Navbar currentUser={currentUser} />
                   <Searchbar />
